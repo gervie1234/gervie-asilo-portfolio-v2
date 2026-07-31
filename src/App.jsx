@@ -11,7 +11,7 @@ const navItems = [
   { id: "designs", label: "Graphic Design", icon: "image" },
   { id: "experience", label: "Experience", icon: "briefcase" },
   { id: "impact", label: "Impact", icon: "file" },
-  { id: "stack", label: "Stack", icon: "code" },
+  { id: "stack", label: "Tech Stack", icon: "code" },
   { id: "contact", label: "Contact", icon: "mail" },
 ];
 
@@ -432,7 +432,7 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
           {navItems.map((item, index) => {
             const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage;
             const href = item.id === "stack"
-              ? "/stack"
+              ? (isSecondaryPage ? "/#stack-preview" : "#stack-preview")
               : item.id === "contact"
                 ? "/contact"
                 : item.id === "projects" && isSecondaryPage
@@ -648,14 +648,14 @@ function App() {
     if (isStackPage || isContactPage || isProjectsPage || isDesignsPage) return undefined;
 
     const sections = navItems
-      .map(({ id }) => document.getElementById(id))
+      .map(({ id }) => document.getElementById(id === "stack" ? "stack-preview" : id))
       .filter(Boolean);
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveSection(visible.target.id);
+        if (visible) setActiveSection(visible.target.id === "stack-preview" ? "stack" : visible.target.id);
       },
       { rootMargin: "-20% 0px -60% 0px", threshold: [0.05, 0.2, 0.5] },
     );
