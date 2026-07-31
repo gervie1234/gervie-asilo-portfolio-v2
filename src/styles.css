@@ -538,8 +538,10 @@ h2 em {
 
 .metrics strong {
   color: var(--text);
-  font: 400 28px var(--mono);
-  letter-spacing: -0.08em;
+  font: 400 28px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
 }
 
 .metrics sup {

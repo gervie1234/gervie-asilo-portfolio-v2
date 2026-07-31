@@ -688,9 +688,9 @@ function App() {
 
         <section className="metrics content-width" aria-label="Career highlights">
           <div><strong>6<sup>+</sup></strong><span>YEARS OF<br />EXPERIENCE</span></div>
-          <div><strong>7<sup>+</sup></strong><span>PUBLISHED<br />PROJECTS</span></div>
-          <div><strong>100<sup>%</sup></strong><span>OUTCOME-FOCUSED<br />BUILDS</span></div>
-          <div><strong>3<sup>IN 1</sup></strong><span>CODE · DESIGN<br />SYSTEMS</span></div>
+          <div><strong>5<sup>+</sup></strong><span>YEARS OF<br />IMS OWNERSHIP</span></div>
+          <div><strong>200<sup>+</sup></strong><span>E-COMMERCE<br />LISTINGS</span></div>
+          <div><strong>150K<sup>+</sup></strong><span>STORE FOLLOWERS<br />REACHED</span></div>
         </section>
 
         <section className="projects-section content-width section-space" id="projects">
