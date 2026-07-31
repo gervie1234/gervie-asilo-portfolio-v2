@@ -270,7 +270,7 @@ a {
   letter-spacing: 0.04em;
 }
 
-.email-copy {
+.resume-download {
   width: 100%;
   min-height: 44px;
   display: flex;
@@ -280,18 +280,28 @@ a {
   background: transparent;
   color: var(--text);
   font: 500 11px var(--mono);
+  letter-spacing: 0.025em;
   cursor: pointer;
+  transition: color 180ms ease;
 }
 
-.email-copy:hover {
+.resume-download:hover {
   color: var(--accent);
 }
 
-.copy-status {
-  min-height: 12px;
-  margin: 1px 0 0;
-  color: var(--accent);
-  font: 400 9px var(--mono);
+.resume-download svg {
+  flex: 0 0 auto;
+  transition: transform 180ms var(--ease);
+}
+
+.resume-download:hover svg {
+  transform: translateY(2px);
+}
+
+.resume-download:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .mobile-header,

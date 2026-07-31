@@ -256,6 +256,7 @@ function Icon({ name, size = 17 }) {
     arrow: <><path d="M5 19 19 5M9 5h10v10" /></>,
     copy: <><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></>,
     check: <path d="m5 12 4 4L19 6" />,
+    download: <><path d="M12 3v12M7 10l5 5 5-5" /><path d="M5 21h14" /></>,
     soundOn: <><path d="M11 5 6.5 9H3v6h3.5l4.5 4z" /><path d="M15 9.5a4 4 0 0 1 0 5M17.8 6.8a7.5 7.5 0 0 1 0 10.4" /></>,
     soundOff: <><path d="M11 5 6.5 9H3v6h3.5l4.5 4z" /><path d="m16 10 5 5M21 10l-5 5" /></>,
   };
@@ -349,9 +350,6 @@ function ProjectCard({ project, index }) {
 }
 
 function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false }) {
-  const [copied, setCopied] = useState(false);
-  const siteUrl = "https://gervieasilo.com";
-
   const closeThenNavigate = (event, href) => {
     const isPrimaryClick = event.button === 0;
     const hasModifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -369,16 +367,6 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
     window.setTimeout(() => {
       window.location.assign(href);
     }, prefersReducedMotion ? 0 : 190);
-  };
-
-  const copyWebsite = async () => {
-    try {
-      await navigator.clipboard.writeText(siteUrl);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      window.location.href = siteUrl;
-    }
   };
 
   return (
@@ -467,11 +455,15 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
             </a>
           </div>
           <p className="contact-label">WEB APPS, BUSINESS SYSTEMS<br />DESIGN &amp; TECHNICAL SUPPORT</p>
-          <button className="email-copy" onClick={copyWebsite}>
-            <span>gervieasilo.com</span>
-            <Icon name={copied ? "check" : "copy"} size={15} />
-          </button>
-          <p className="copy-status" aria-live="polite">{copied ? "Website URL copied" : ""}</p>
+          <a
+            className="resume-download"
+            href="/Gervie-Asilo-Resume-2026.pdf"
+            download="Gervie-Asilo-Resume-2026.pdf"
+            aria-label="Download Gervie Asilo's 2026 resume as a PDF"
+          >
+            <span>DOWNLOAD RÉSUMÉ</span>
+            <Icon name="download" size={15} />
+          </a>
         </div>
       </aside>
       <button
