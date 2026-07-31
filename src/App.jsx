@@ -3,14 +3,40 @@ import { flushSync } from "react-dom";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
+import DesignsPage from "./DesignsPage";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
   { id: "projects", label: "Projects", icon: "layers" },
+  { id: "designs", label: "Graphic Design", icon: "image" },
   { id: "experience", label: "Experience", icon: "briefcase" },
   { id: "impact", label: "Impact", icon: "file" },
   { id: "stack", label: "Stack", icon: "code" },
   { id: "contact", label: "Contact", icon: "mail" },
+];
+
+const designHighlights = [
+  {
+    slug: "air-max-90",
+    title: "Air Everywhere",
+    category: "PRODUCT CAMPAIGN",
+    image: "/designs/sole-district-air-max-90.png",
+    alt: "Sole District PH Nike Air Max 90 promotional graphic",
+  },
+  {
+    slug: "air-jordan-1-high",
+    title: "Air Jordan 1 High",
+    category: "SALE CAMPAIGN",
+    image: "/designs/sole-district-air-jordan-1.png",
+    alt: "Sole District PH Air Jordan 1 High sale graphic",
+  },
+  {
+    slug: "dunk-low",
+    title: "Icon Status",
+    category: "PRODUCT SPOTLIGHT",
+    image: "/designs/sole-district-dunk-low.png",
+    alt: "Sole District PH Nike Dunk Low promotional graphic",
+  },
 ];
 
 const projects = [
@@ -245,6 +271,7 @@ function Icon({ name, size = 17 }) {
   const paths = {
     user: <><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20c.7-4 2.9-6 6.5-6s5.8 2 6.5 6" /></>,
     layers: <><path d="m12 3-9 5 9 5 9-5-9-5Z" /><path d="m3 12 9 5 9-5M3 16l9 5 9-5" /></>,
+    image: <><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m4 17 5-5 4 4 2-2 5 5" /></>,
     file: <><path d="M6 3h9l3 3v15H6z" /><path d="M14 3v4h4M9 12h6M9 16h5" /></>,
     briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2" /></>,
     code: <><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14" /></>,
@@ -349,7 +376,7 @@ function ProjectCard({ project, index }) {
   );
 }
 
-function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false }) {
+function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false }) {
   const closeThenNavigate = (event, href) => {
     const isPrimaryClick = event.button === 0;
     const hasModifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -372,7 +399,7 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
   return (
     <>
       <header className="mobile-header">
-        <a className="brand" href={(isStackPage || isContactPage || isProjectsPage) ? "/" : "#profile"}>GERVIE ASILO</a>
+        <a className="brand" href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}>GERVIE ASILO</a>
         <button className="icon-button" onClick={() => setOpen(!open)} aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open}>
           <Icon name={open ? "close" : "menu"} size={20} />
         </button>
@@ -381,8 +408,8 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
         <div className="sidebar-top">
           <a
             className="brand"
-            href={(isStackPage || isContactPage || isProjectsPage) ? "/" : "#profile"}
-            onClick={(event) => closeThenNavigate(event, (isStackPage || isContactPage || isProjectsPage) ? "/" : "#profile")}
+            href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}
+            onClick={(event) => closeThenNavigate(event, (isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile")}
           >
             GERVIE ASILO
           </a>
@@ -392,14 +419,16 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
         <nav aria-label="Main navigation">
           <p className="nav-label">INDEX</p>
           {navItems.map((item, index) => {
-            const isSecondaryPage = isStackPage || isContactPage || isProjectsPage;
+            const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage;
             const href = item.id === "stack"
               ? "/stack"
               : item.id === "contact"
                 ? "/contact"
                 : item.id === "projects" && isSecondaryPage
                   ? "/projects"
-                  : isSecondaryPage
+                  : item.id === "designs" && isSecondaryPage
+                    ? "/designs"
+                    : isSecondaryPage
                     ? "/#" + item.id
                     : "#" + item.id;
             const isActive = isStackPage
@@ -408,7 +437,9 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
                 ? item.id === "contact"
                 : isProjectsPage
                   ? item.id === "projects"
-                  : activeSection === item.id;
+                  : isDesignsPage
+                    ? item.id === "designs"
+                    : activeSection === item.id;
             return (
               <a
                 key={item.id}
@@ -482,7 +513,8 @@ function App() {
   const isStackPage = normalizedPath === "/stack";
   const isContactPage = normalizedPath === "/contact";
   const isProjectsPage = normalizedPath === "/projects";
-  const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : "profile");
+  const isDesignsPage = normalizedPath === "/designs";
+  const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : "profile");
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("portfolio-sound") === "on");
@@ -602,7 +634,7 @@ function App() {
   }, [soundEnabled]);
 
   useEffect(() => {
-    if (isStackPage || isContactPage || isProjectsPage) return undefined;
+    if (isStackPage || isContactPage || isProjectsPage || isDesignsPage) return undefined;
 
     const sections = navItems
       .map(({ id }) => document.getElementById(id))
@@ -618,10 +650,10 @@ function App() {
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [isStackPage, isContactPage, isProjectsPage]);
+  }, [isStackPage, isContactPage, isProjectsPage, isDesignsPage]);
 
-  if (isStackPage || isContactPage || isProjectsPage) {
-    const activePage = isStackPage ? "stack" : isContactPage ? "contact" : "projects";
+  if (isStackPage || isContactPage || isProjectsPage || isDesignsPage) {
+    const activePage = isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : "designs";
     return (
       <div className="site-shell">
         <a className="skip-link" href="#main-content">Skip to main content</a>
@@ -636,13 +668,16 @@ function App() {
           isStackPage={isStackPage}
           isContactPage={isContactPage}
           isProjectsPage={isProjectsPage}
+          isDesignsPage={isDesignsPage}
         />
         <main id="main-content">
           <div className="ambient ambient-one" />
           <div className="ambient ambient-two" />
           {isProjectsPage
             ? <ProjectsPage Icon={Icon} ProjectVisual={ProjectVisual} projects={projects} />
-            : isStackPage
+            : isDesignsPage
+              ? <DesignsPage Icon={Icon} designs={designHighlights} />
+              : isStackPage
               ? <TechStackPage Icon={Icon} />
               : <ContactPage Icon={Icon} />}
         </main>
@@ -681,7 +716,7 @@ function App() {
             <div className="social-links" aria-label="Social links">
               <a href="https://gervieasilo.com/" target="_blank" rel="noreferrer">website <Icon name="arrow" size={12} /></a>
               <a href="https://gervieasilo.com/projects" target="_blank" rel="noreferrer">projects <Icon name="arrow" size={12} /></a>
-              <a href="https://gervieasilo.com/gallery" target="_blank" rel="noreferrer">gallery <Icon name="arrow" size={12} /></a>
+              <a href="/designs">designs <Icon name="arrow" size={12} /></a>
             </div>
           </div>
         </section>
@@ -702,8 +737,29 @@ function App() {
           <a className="project-mobile-link" href="/projects"><span>VIEW ALL PROJECTS</span><Icon name="arrow" size={15} /></a>
         </section>
 
+        <section className="designs-section content-width section-space" id="designs">
+          <SectionHeading number="02" action="view more" actionHref="/designs">graphic design</SectionHeading>
+          <p className="designs-lead">Selected product campaign visuals shaped for clear offers, strong recognition, and social-first impact.</p>
+          <div className="design-preview-grid">
+            {designHighlights.map((design, index) => (
+              <a className="design-preview-card" href={"/designs#" + design.slug} key={design.slug}>
+                <figure>
+                  <div className="design-preview-image">
+                    <img src={design.image} alt={design.alt} loading="lazy" decoding="async" />
+                  </div>
+                  <figcaption>
+                    <span>{String(index + 1).padStart(2, "0")} / {design.category}</span>
+                    <strong>{design.title}</strong>
+                  </figcaption>
+                </figure>
+              </a>
+            ))}
+          </div>
+          <a className="designs-mobile-link" href="/designs"><span>VIEW MORE DESIGNS</span><Icon name="arrow" size={15} /></a>
+        </section>
+
         <section className="work-history-section content-width section-space" id="experience">
-          <SectionHeading number="02">experience</SectionHeading>
+          <SectionHeading number="03">experience</SectionHeading>
           <p className="work-history-lead">Experience shaped by building business systems, digital storefronts, brand assets, and reliable day-to-day workflows.</p>
           <div className="work-timeline">
             {workHistory.map((job) => (
@@ -730,7 +786,7 @@ function App() {
         </section>
 
         <section className="impact-section content-width section-space" id="impact">
-          <SectionHeading number="03">proven impact</SectionHeading>
+          <SectionHeading number="04">proven impact</SectionHeading>
           <div className="impact-intro">
             <p>Concrete results from real work—built for hiring managers who want evidence, not generic claims.</p>
           </div>
@@ -752,7 +808,7 @@ function App() {
         </section>
 
         <section className="stack-section content-width section-space" id="stack-preview">
-          <SectionHeading number="04" action="view all stacks" actionHref="/stack">core stack</SectionHeading>
+          <SectionHeading number="05" action="view all stacks" actionHref="/stack">core stack</SectionHeading>
           <div className="stack-layout">
             <p>My primary build path from interface to deployment—the tools I reach for most often when shipping practical products.</p>
             <div className="skill-cloud" role="list" aria-label="Core technologies">
@@ -771,7 +827,7 @@ function App() {
           <footer>
             <span>© 2026 GERVIE ASILO</span>
             <span>DESIGNED &amp; BUILT WITH INTENT</span>
-            <a href={(isStackPage || isContactPage || isProjectsPage) ? "/" : "#profile"}>BACK TO TOP ↑</a>
+            <a href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}>BACK TO TOP ↑</a>
           </footer>
         </section>
       </main>
