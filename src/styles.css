@@ -23,14 +23,39 @@
   --bg: #efeee9;
   --surface: #e5e4df;
   --surface-raised: #f7f6f1;
-  --text: #121314;
-  --text-soft: #565754;
-  --text-faint: #777873;
-  --line: #cbcac4;
-  --line-strong: #acaea8;
-  --accent: #6f8d00;
-  --accent-2: #d54f2c;
+  --text: #101112;
+  --text-soft: #424440;
+  --text-faint: #5e605b;
+  --line: #c2c1bb;
+  --line-strong: #9fa19a;
+  --accent: #637e00;
+  --accent-2: #c94728;
   --sidebar: rgba(239, 238, 233, 0.94);
+}
+
+:root[data-theme="light"] body {
+  -webkit-font-smoothing: auto;
+  text-rendering: optimizeLegibility;
+}
+
+:root[data-theme="light"] :where(
+  p,
+  li,
+  label,
+  input,
+  select,
+  textarea,
+  .sidebar nav a,
+  .eyebrow,
+  .nav-label,
+  .section-heading,
+  .project-kicker,
+  .archive-project-kicker,
+  .metrics span,
+  .contact-label,
+  .social-links a
+) {
+  font-weight: 500;
 }
 
 * {
