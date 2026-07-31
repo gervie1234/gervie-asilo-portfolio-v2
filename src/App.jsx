@@ -42,11 +42,13 @@ const designHighlights = [
 const projects = [
   {
     number: "01",
-    label: "LANDING PAGE",
-    title: "Megalight Website",
-    summary: "A nationwide solar-lighting website shaped for project-ready, DPWH-compliant solutions.",
+    label: "BUSINESS SYSTEM",
+    title: "Megalight Information Management System",
+    summary: "A full-scale internal platform connecting delivery receipts, sales, payments, warranties, inventory, and branch operations.",
     accent: "#d6ff64",
     kind: "flow",
+    image: "/projects/megalight-information-management-system.png",
+    imageAlt: "Megalight Information Management System dashboard showing sales, delivery receipts, payments, warranties, and branch performance",
     href: "https://megalight.ph/",
   },
   {
@@ -316,7 +318,16 @@ function Portrait() {
   );
 }
 
-function ProjectVisual({ kind, accent }) {
+function ProjectVisual({ kind, accent, image, imageAlt = "" }) {
+  if (image) {
+    return (
+      <div className="project-visual project-visual-screenshot" style={{ "--accent": accent }}>
+        <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+        <span className="project-visual-badge">LIVE SYSTEM</span>
+      </div>
+    );
+  }
+
   if (kind === "flow") {
     return (
       <div className="project-visual flow-visual" style={{ "--accent": accent }}>
@@ -364,7 +375,7 @@ function ProjectCard({ project, index }) {
         <span>{project.number}</span>
         <span>{project.label}</span>
       </div>
-      <ProjectVisual kind={project.kind} accent={project.accent} />
+      <ProjectVisual kind={project.kind} accent={project.accent} image={project.image} imageAlt={project.imageAlt} />
       <div className="project-copy">
         <div>
           <h3>{project.title}</h3>

@@ -29,7 +29,12 @@ function ProjectsPage({ Icon, ProjectVisual, projects }) {
               <span>{project.number}</span>
               <span>{project.label}</span>
             </div>
-            <ProjectVisual kind={project.kind} accent={project.accent} />
+            <ProjectVisual
+              kind={project.kind}
+              accent={project.accent}
+              image={project.image}
+              imageAlt={project.imageAlt}
+            />
             <div className="archive-project-copy">
               <div>
                 <h2>{project.title}</h2>
