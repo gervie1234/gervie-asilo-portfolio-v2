@@ -724,10 +724,11 @@ function App() {
               <p>I’m a full-stack software developer and graphic designer building practical digital solutions with clean, modern design.</p>
               <p>I connect interfaces, backend systems, branding, and workflows so projects are easier to launch, manage, and improve.</p>
             </div>
-            <div className="social-links" aria-label="Social links">
-              <a href="https://gervieasilo.com/" target="_blank" rel="noreferrer">website <Icon name="arrow" size={12} /></a>
-              <a href="https://gervieasilo.com/projects" target="_blank" rel="noreferrer">projects <Icon name="arrow" size={12} /></a>
-              <a href="/designs">designs <Icon name="arrow" size={12} /></a>
+            <div className="social-links" aria-label="Professional profiles and contact">
+              <a href="https://github.com/gervie1234" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on GitHub">github <Icon name="arrow" size={12} /></a>
+              <a href="https://www.linkedin.com/in/gervieasilo/" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on LinkedIn">linkedin <Icon name="arrow" size={12} /></a>
+              <a href="https://www.facebook.com/gervieasilo" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on Facebook">facebook <Icon name="arrow" size={12} /></a>
+              <a href="mailto:gervieasilo@gmail.com" aria-label="Email Gervie Asilo">email <Icon name="arrow" size={12} /></a>
             </div>
           </div>
         </section>
