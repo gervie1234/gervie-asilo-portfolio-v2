@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
@@ -17,6 +17,25 @@ const navItems = [
   { id: "playground", label: "Playground", icon: "play" },
   { id: "contact", label: "Contact", icon: "mail" },
 ];
+
+const appPagePaths = new Set(["/", "/stack", "/contact", "/projects", "/designs", "/playground", "/aim-lab"]);
+
+function getRouteKey(url = window.location) {
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function scrollToRoute(url) {
+  if (url.hash) {
+    const targetId = decodeURIComponent(url.hash.slice(1));
+    const target = document.getElementById(targetId);
+    if (target) {
+      target.scrollIntoView({ behavior: "auto", block: "start" });
+      return;
+    }
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+}
 
 const designHighlights = [
   {
@@ -427,23 +446,8 @@ function ProjectCard({ project, index }) {
 
 function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
   const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage;
-  const closeThenNavigate = (event, href) => {
-    const isPrimaryClick = event.button === 0;
-    const hasModifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-    const isMobileDrawer = window.matchMedia("(max-width: 920px)").matches;
-
-    if (!open || !isMobileDrawer || !isPrimaryClick || hasModifier) {
-      setOpen(false);
-      return;
-    }
-
-    event.preventDefault();
+  const closeThenNavigate = () => {
     setOpen(false);
-
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.setTimeout(() => {
-      window.location.assign(href);
-    }, prefersReducedMotion ? 0 : 190);
   };
 
   return (
@@ -562,7 +566,9 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
 }
 
 function App() {
-  const normalizedPath = window.location.pathname.replace(/\/+$/, "") || "/";
+  const [routeKey, setRouteKey] = useState(() => getRouteKey());
+  const routeUrl = new URL(routeKey, window.location.origin);
+  const normalizedPath = routeUrl.pathname.replace(/\/+$/, "") || "/";
   const isStackPage = normalizedPath === "/stack";
   const isContactPage = normalizedPath === "/contact";
   const isProjectsPage = normalizedPath === "/projects";
@@ -573,6 +579,41 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("portfolio-sound") === "on");
+
+  const navigateTo = useCallback((href, { historyMode = "push" } = {}) => {
+    const nextUrl = href instanceof URL ? href : new URL(href, window.location.href);
+    if (nextUrl.origin !== window.location.origin) {
+      window.location.assign(nextUrl.href);
+      return;
+    }
+
+    const nextRouteKey = getRouteKey(nextUrl);
+    if (nextRouteKey === routeKey) {
+      scrollToRoute(nextUrl);
+      return;
+    }
+
+    const currentUrl = new URL(routeKey, window.location.origin);
+    const pageChanged = currentUrl.pathname !== nextUrl.pathname || currentUrl.search !== nextUrl.search;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rootElement = document.documentElement;
+
+    const commitNavigation = () => {
+      if (historyMode === "push") window.history.pushState({}, "", nextUrl.href);
+      if (historyMode === "replace") window.history.replaceState({}, "", nextUrl.href);
+      flushSync(() => setRouteKey(nextRouteKey));
+      scrollToRoute(nextUrl);
+    };
+
+    if (!pageChanged || prefersReducedMotion || rootElement.hasAttribute("data-theme-transitioning")) {
+      commitNavigation();
+      return;
+    }
+
+    rootElement.setAttribute("data-route-transitioning", "");
+    commitNavigation();
+    window.setTimeout(() => rootElement.removeAttribute("data-route-transitioning"), 260);
+  }, [routeKey]);
 
   const toggleSound = () => {
     const nextEnabled = !soundEnabled;
@@ -689,6 +730,43 @@ function App() {
   }, [soundEnabled]);
 
   useEffect(() => {
+    const handleInternalNavigation = (event) => {
+      if (
+        event.defaultPrevented
+        || event.button !== 0
+        || event.metaKey
+        || event.ctrlKey
+        || event.shiftKey
+        || event.altKey
+        || !(event.target instanceof Element)
+      ) return;
+
+      const anchor = event.target.closest("a[href]");
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("javascript:")) return;
+
+      const nextUrl = new URL(anchor.href, window.location.href);
+      if (nextUrl.origin !== window.location.origin) return;
+      const nextPath = nextUrl.pathname.replace(/\/+$/, "") || "/";
+      if (!appPagePaths.has(nextPath)) return;
+
+      event.preventDefault();
+      navigateTo(nextUrl);
+    };
+
+    const handleHistoryNavigation = () => navigateTo(window.location.href, { historyMode: "none" });
+
+    document.addEventListener("click", handleInternalNavigation);
+    window.addEventListener("popstate", handleHistoryNavigation);
+    return () => {
+      document.removeEventListener("click", handleInternalNavigation);
+      window.removeEventListener("popstate", handleHistoryNavigation);
+    };
+  }, [navigateTo]);
+
+  useEffect(() => {
     if (isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage) return undefined;
 
     const sections = navItems
@@ -735,8 +813,8 @@ function App() {
               ? <DesignsPage Icon={Icon} designs={designHighlights} />
               : isPlaygroundPage
                 ? isAimLabPage
-                  ? <AimLabPage Icon={Icon} onAimSound={(type) => soundEnabled && playUiTone(type)} />
-                  : <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} />
+                  ? <AimLabPage Icon={Icon} onAimSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
+                  : <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
               : isStackPage
               ? <TechStackPage Icon={Icon} />
               : <ContactPage Icon={Icon} />}

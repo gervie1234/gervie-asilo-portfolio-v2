@@ -70,7 +70,7 @@ function getStoredBest(mode = "easy") {
   return Number.isFinite(stored) ? stored : 0;
 }
 
-function TypingPage({ Icon, onTypingSound }) {
+function TypingPage({ Icon, onTypingSound, onNavigate }) {
   const [mode, setMode] = useState("easy");
   const [passage, setPassage] = useState(() => createPassage("easy"));
   const [completedWords, setCompletedWords] = useState([]);
@@ -275,7 +275,7 @@ function TypingPage({ Icon, onTypingSound }) {
 
     if (event.key === "Escape") {
       event.preventDefault();
-      window.location.assign("/#profile");
+      onNavigate?.("/#profile");
       return;
     }
 

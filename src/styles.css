@@ -2735,6 +2735,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   animation: theme-circular-conceal 500ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
+html[data-route-transitioning] main {
+  animation: route-page-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @keyframes theme-circular-reveal {
   from { clip-path: circle(0 at var(--theme-x) var(--theme-y)); }
   to { clip-path: circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
@@ -2743,6 +2747,17 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 @keyframes theme-circular-conceal {
   from { clip-path: circle(var(--theme-radius) at var(--theme-x) var(--theme-y)); }
   to { clip-path: circle(0 at var(--theme-x) var(--theme-y)); }
+}
+
+@keyframes route-page-in {
+  from {
+    opacity: .28;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

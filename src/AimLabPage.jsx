@@ -16,7 +16,7 @@ function createTarget(id = 0) {
   };
 }
 
-function AimLabPage({ Icon, onAimSound }) {
+function AimLabPage({ Icon, onAimSound, onNavigate }) {
   const [status, setStatus] = useState("idle");
   const [target, setTarget] = useState(() => createTarget());
   const [hits, setHits] = useState(0);
@@ -95,7 +95,7 @@ function AimLabPage({ Icon, onAimSound }) {
     const handleShortcut = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        window.location.assign("/#profile");
+        onNavigate?.("/#profile");
         return;
       }
 
@@ -107,7 +107,7 @@ function AimLabPage({ Icon, onAimSound }) {
 
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
-  }, [status, best]);
+  }, [status, best, onNavigate]);
 
   return (
     <section className="typing-page aim-page content-width" aria-labelledby="aim-title">
