@@ -1,23 +1,58 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const simplePassages = [
-  "the sun is bright and the sky looks clear today",
-  "i like to build simple things that help people",
-  "we can learn new skills one small step at a time",
-  "good ideas become better when we share them with others",
-  "my goal is to make every project easy to use",
-  "a clean design helps people find what they need faster",
-  "small changes can make a big difference in our work",
-  "the best way to improve is to practice every day",
-  "our team works together to solve one problem at a time",
-  "take a short break and come back with a clear mind",
-  "simple code is easier to read change and maintain",
-  "every good project starts with a clear and useful plan",
-];
+const typingModes = {
+  easy: {
+    label: "Easy",
+    description: "short and familiar sentences",
+    passages: [
+      "the sun is bright and the sky looks clear today",
+      "i like to build simple things that help people",
+      "we can learn new skills one small step at a time",
+      "good ideas become better when we share them with others",
+      "my goal is to make every project easy to use",
+      "a clean design helps people find what they need faster",
+      "small changes can make a big difference in our work",
+      "the best way to improve is to practice every day",
+      "our team works together to solve one problem at a time",
+      "take a short break and come back with a clear mind",
+      "simple code is easier to read change and maintain",
+      "every good project starts with a clear and useful plan",
+    ],
+  },
+  medium: {
+    label: "Medium",
+    description: "longer sentences with work vocabulary",
+    passages: [
+      "careful planning helps a small team finish complex projects without wasting time or losing focus",
+      "a useful product should solve a real problem and remain easy for everyone to understand",
+      "clear communication allows designers and developers to turn good ideas into reliable digital experiences",
+      "regular practice builds confidence and helps you type longer sentences with fewer mistakes over time",
+      "thoughtful feedback can improve the quality of our work before a project reaches its users",
+      "strong teams ask better questions test their ideas and learn quickly from every result",
+      "modern websites should feel fast remain accessible and work well across many different screen sizes",
+      "good documentation helps every team member understand important decisions and complete their tasks with confidence",
+    ],
+  },
+  hard: {
+    label: "Hard",
+    description: "long technical sentences and advanced words",
+    passages: [
+      "reliable software requires thoughtful architecture consistent testing clear documentation and careful attention to changing business requirements",
+      "experienced developers balance performance security accessibility and maintainability while delivering practical solutions under demanding deadlines",
+      "effective information management connects people processes and technology so organizations can make faster and more confident decisions",
+      "continuous improvement depends on honest feedback disciplined practice measurable outcomes and the willingness to challenge familiar assumptions",
+      "sophisticated interfaces should reduce cognitive effort while preserving clarity responsiveness and consistent behavior across different devices",
+      "technical excellence becomes valuable when complex systems remain dependable understandable and genuinely useful to the people operating them",
+      "scalable applications require efficient data structures resilient services secure authentication and continuous monitoring across production environments",
+      "successful engineering teams communicate uncertainty clearly evaluate competing tradeoffs and adapt their approach when new evidence becomes available",
+    ],
+  },
+};
 
-function createPassage(previousPassage = "") {
-  const nextPassage = simplePassages[Math.floor(Math.random() * simplePassages.length)];
-  return nextPassage === previousPassage ? createPassage(previousPassage) : nextPassage;
+function createPassage(mode = "easy", previousPassage = "") {
+  const passages = typingModes[mode].passages;
+  const nextPassage = passages[Math.floor(Math.random() * passages.length)];
+  return nextPassage === previousPassage ? createPassage(mode, previousPassage) : nextPassage;
 }
 
 const keyboardRows = [
@@ -26,13 +61,18 @@ const keyboardRows = [
   ["z", "x", "c", "v", "b", "n", "m"],
 ];
 
-function getStoredBest() {
-  const stored = Number(localStorage.getItem("portfolio-typing-best-v1") || 0);
+function getBestStorageKey(mode) {
+  return mode === "easy" ? "portfolio-typing-best-v1" : `portfolio-typing-best-v1-${mode}`;
+}
+
+function getStoredBest(mode = "easy") {
+  const stored = Number(localStorage.getItem(getBestStorageKey(mode)) || 0);
   return Number.isFinite(stored) ? stored : 0;
 }
 
 function TypingPage({ Icon, onTypingSound }) {
-  const [passage, setPassage] = useState(createPassage);
+  const [mode, setMode] = useState("easy");
+  const [passage, setPassage] = useState(() => createPassage("easy"));
   const [completedWords, setCompletedWords] = useState([]);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentInput, setCurrentInput] = useState("");
@@ -43,7 +83,7 @@ function TypingPage({ Icon, onTypingSound }) {
   const [attempts, setAttempts] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [mistakeAt, setMistakeAt] = useState(-1);
-  const [best, setBest] = useState(getStoredBest);
+  const [best, setBest] = useState(() => getStoredBest("easy"));
   const inputRef = useRef(null);
   const startTimeRef = useRef(0);
   const keyTimerRef = useRef(null);
@@ -90,8 +130,8 @@ function TypingPage({ Icon, onTypingSound }) {
   useEffect(() => {
     if (!finished || wpm <= best) return;
     setBest(wpm);
-    localStorage.setItem("portfolio-typing-best-v1", String(wpm));
-  }, [best, finished, wpm]);
+    localStorage.setItem(getBestStorageKey(mode), String(wpm));
+  }, [best, finished, mode, wpm]);
 
   useEffect(() => () => {
     window.clearTimeout(keyTimerRef.current);
@@ -100,7 +140,31 @@ function TypingPage({ Icon, onTypingSound }) {
 
   const restartTest = () => {
     previousBestRef.current = best;
-    setPassage((current) => createPassage(current));
+    setPassage((current) => createPassage(mode, current));
+    setCompletedWords([]);
+    setCurrentWordIndex(0);
+    setCurrentInput("");
+    setStarted(false);
+    setFinished(false);
+    setElapsed(0);
+    setActiveKey("");
+    setAttempts(0);
+    setMistakes(0);
+    setMistakeAt(-1);
+    window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 0);
+  };
+
+  const selectMode = (nextMode) => {
+    if (nextMode === mode) {
+      inputRef.current?.focus({ preventScroll: true });
+      return;
+    }
+
+    const nextBest = getStoredBest(nextMode);
+    previousBestRef.current = nextBest;
+    setMode(nextMode);
+    setBest(nextBest);
+    setPassage(createPassage(nextMode));
     setCompletedWords([]);
     setCurrentWordIndex(0);
     setCurrentInput("");
@@ -241,6 +305,24 @@ function TypingPage({ Icon, onTypingSound }) {
           <span><kbd>esc</kbd> close</span>
         </div>
 
+        <div className="typing-mode-picker">
+          <span className="typing-mode-label">DIFFICULTY</span>
+          <div className="typing-mode-buttons" role="group" aria-label="Typing difficulty">
+            {Object.entries(typingModes).map(([modeKey, modeConfig]) => (
+              <button
+                className={mode === modeKey ? "is-active" : ""}
+                type="button"
+                aria-pressed={mode === modeKey}
+                onClick={() => selectMode(modeKey)}
+                key={modeKey}
+              >
+                {modeConfig.label}
+              </button>
+            ))}
+          </div>
+          <span className="typing-mode-description">{typingModes[mode].description}</span>
+        </div>
+
         {!finished ? (
           <>
             <div className="typing-stats" aria-live="polite">
@@ -323,6 +405,7 @@ function TypingPage({ Icon, onTypingSound }) {
           </>
         ) : (
           <div className="typing-result" aria-live="polite">
+            <span className="typing-result-mode">{typingModes[mode].label} MODE</span>
             <strong className="typing-result-score">{wpm}</strong>
             <span className="typing-result-label">WORDS PER MINUTE</span>
 
