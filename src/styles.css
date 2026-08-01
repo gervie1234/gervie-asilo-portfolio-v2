@@ -3529,6 +3529,40 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   line-height: 1.75;
 }
 
+.playground-game-switcher {
+  width: max-content;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  margin-top: 24px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface-raised) 72%, transparent);
+}
+
+.playground-game-switcher a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: var(--text-soft);
+  font: 500 9px var(--mono);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.playground-game-switcher a:hover:not(.is-active) {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.playground-game-switcher a.is-active {
+  background: var(--text);
+  color: var(--bg);
+}
+
 .typing-lab {
   position: relative;
   min-height: 560px;
@@ -3939,6 +3973,220 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   color: var(--accent);
 }
 
+/* Aim playground */
+.aim-lab {
+  margin-top: 32px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+}
+
+.aim-toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(420px, 1fr);
+  gap: 40px;
+  align-items: center;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.aim-toolbar .typing-shortcuts {
+  margin: 0;
+}
+
+.aim-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.aim-stats > div {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.aim-stats strong {
+  font: 500 20px/1 var(--mono);
+  letter-spacing: -.05em;
+}
+
+.aim-stats strong small,
+.aim-result > strong small {
+  margin-left: 3px;
+  color: var(--text-faint);
+  font-size: .48em;
+  letter-spacing: 0;
+}
+
+.aim-stats sup,
+.aim-result sup {
+  margin-left: 2px;
+  color: var(--text-faint);
+  font-size: .45em;
+  vertical-align: .35em;
+}
+
+.aim-stats span,
+.aim-result > span,
+.aim-result > div span {
+  color: var(--text-faint);
+  font: 400 8px var(--mono);
+  letter-spacing: .14em;
+}
+
+.aim-arena {
+  position: relative;
+  min-height: 500px;
+  overflow: hidden;
+  cursor: crosshair;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--text) 4%, transparent), transparent 48%),
+    radial-gradient(circle, color-mix(in srgb, var(--text-faint) 38%, transparent) .7px, transparent .8px);
+  background-size: auto, 22px 22px;
+}
+
+.aim-arena::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  box-shadow: 0 0 180px 70px color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+.aim-target {
+  position: absolute;
+  z-index: 2;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 1px solid color-mix(in srgb, var(--accent) 75%, var(--text));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 7%, transparent), 0 0 26px color-mix(in srgb, var(--accent) 18%, transparent);
+  cursor: crosshair;
+  animation: aim-target-in 140ms var(--ease) both;
+}
+
+.aim-target::before,
+.aim-target::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.aim-target::before {
+  inset: 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 65%, transparent);
+}
+
+.aim-target::after {
+  inset: 18px;
+  background: var(--accent);
+}
+
+.aim-target span {
+  width: 5px;
+  height: 5px;
+  z-index: 1;
+  border-radius: 50%;
+  background: #111;
+}
+
+@keyframes aim-target-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.72); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.aim-message,
+.aim-result {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  cursor: default;
+}
+
+.aim-message > p {
+  margin: 26px 0 0;
+  color: var(--text-faint);
+  font: 400 9px var(--mono);
+  letter-spacing: .05em;
+}
+
+.aim-demo-target {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, var(--text));
+  border-radius: 50%;
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.aim-demo-target::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: inherit;
+}
+
+.aim-demo-target i {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.aim-result > strong {
+  margin-top: 22px;
+  font: 500 clamp(72px, 9vw, 108px)/.85 var(--mono);
+  letter-spacing: -.09em;
+}
+
+.aim-result > div {
+  width: min(100%, 270px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.aim-result > div p {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.aim-result > div strong {
+  font: 500 24px/1 var(--mono);
+  letter-spacing: -.05em;
+}
+
+.aim-result > p {
+  margin: 28px 0 0;
+  color: var(--text-faint);
+  font: 400 10px var(--mono);
+}
+
+.aim-result > p.is-best {
+  color: var(--accent);
+}
+
 @media (max-width: 920px) {
   .typing-page {
     padding-top: 104px;
@@ -3957,6 +4205,11 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
     min-height: 540px;
     padding-inline: 24px;
   }
+
+  .aim-toolbar {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -3966,6 +4219,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 
   .typing-page-header h1 {
     font-size: 48px;
+  }
+
+  .playground-game-switcher {
+    margin-top: 20px;
   }
 
   .typing-lab {
@@ -4026,6 +4283,32 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   .typing-page-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .aim-lab {
+    margin-inline: -4px;
+    border-radius: 12px;
+  }
+
+  .aim-toolbar {
+    padding: 18px;
+  }
+
+  .aim-stats {
+    gap: 10px;
+  }
+
+  .aim-stats strong {
+    font-size: 17px;
+  }
+
+  .aim-arena {
+    min-height: 430px;
+  }
+
+  .aim-target {
+    width: 54px;
+    height: 54px;
   }
 }
 

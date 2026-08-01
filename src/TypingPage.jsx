@@ -308,6 +308,10 @@ function TypingPage({ Icon, onTypingSound }) {
           <a className="page-back-link" href="/#profile">← BACK TO PORTFOLIO</a>
           <p className="eyebrow">07 / PLAYGROUND</p>
           <h1 id="typing-title">Typing <span>Lab.</span></h1>
+          <nav className="playground-game-switcher" aria-label="Playground games">
+            <a className="is-active" href="/playground" aria-current="page">Typing Test</a>
+            <a href="/aim-lab">Aim Lab</a>
+          </nav>
         </div>
         <p>A quick focus break. Type the line, check your pace, then run it again.</p>
       </header>

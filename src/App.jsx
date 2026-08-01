@@ -5,6 +5,7 @@ import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
 import DesignsPage from "./DesignsPage";
 import TypingPage from "./TypingPage";
+import AimLabPage from "./AimLabPage";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
@@ -566,7 +567,8 @@ function App() {
   const isContactPage = normalizedPath === "/contact";
   const isProjectsPage = normalizedPath === "/projects";
   const isDesignsPage = normalizedPath === "/designs";
-  const isPlaygroundPage = normalizedPath === "/playground";
+  const isAimLabPage = normalizedPath === "/aim-lab";
+  const isPlaygroundPage = normalizedPath === "/playground" || isAimLabPage;
   const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : isPlaygroundPage ? "playground" : "profile");
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
@@ -732,7 +734,9 @@ function App() {
             : isDesignsPage
               ? <DesignsPage Icon={Icon} designs={designHighlights} />
               : isPlaygroundPage
-                ? <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} />
+                ? isAimLabPage
+                  ? <AimLabPage Icon={Icon} onAimSound={(type) => soundEnabled && playUiTone(type)} />
+                  : <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} />
               : isStackPage
               ? <TechStackPage Icon={Icon} />
               : <ContactPage Icon={Icon} />}
