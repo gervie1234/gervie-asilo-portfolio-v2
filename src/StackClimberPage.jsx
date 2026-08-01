@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const BEST_KEY = "portfolio-stack-climber-best-v1";
+const HORIZONTAL_ACCELERATION = 0.22;
+const MAX_HORIZONTAL_SPEED = 3.6;
+const HORIZONTAL_DRAG = 0.76;
 
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), maximum);
@@ -193,10 +196,10 @@ function StackClimberPage({ Icon, onGameSound, onNavigate }) {
       const player = game.player;
       player.previousY = player.y;
 
-      if (controlsRef.current.left && !controlsRef.current.right) player.vx -= 0.48;
-      if (controlsRef.current.right && !controlsRef.current.left) player.vx += 0.48;
-      if (controlsRef.current.left === controlsRef.current.right) player.vx *= 0.88;
-      player.vx = clamp(player.vx, -5.4, 5.4);
+      if (controlsRef.current.left && !controlsRef.current.right) player.vx -= HORIZONTAL_ACCELERATION;
+      if (controlsRef.current.right && !controlsRef.current.left) player.vx += HORIZONTAL_ACCELERATION;
+      if (controlsRef.current.left === controlsRef.current.right) player.vx *= HORIZONTAL_DRAG;
+      player.vx = clamp(player.vx, -MAX_HORIZONTAL_SPEED, MAX_HORIZONTAL_SPEED);
 
       player.x += player.vx;
       if (player.x < 8) {
