@@ -182,10 +182,6 @@ function TypingPage({ Icon, onTypingSound }) {
       }
 
       setCurrentInput(nextValue);
-
-      if (currentWordIndex === passageWords.length - 1 && nextValue.length === targetWord.length) {
-        finishTest();
-      }
       return;
     }
 
@@ -202,6 +198,17 @@ function TypingPage({ Icon, onTypingSound }) {
     if (event.key === "Escape") {
       event.preventDefault();
       window.location.assign("/#profile");
+      return;
+    }
+
+    if (event.key === "Backspace" && !currentInput && currentWordIndex > 0) {
+      event.preventDefault();
+      const previousInput = completedWords[completedWords.length - 1] || "";
+      setCompletedWords((current) => current.slice(0, -1));
+      setCurrentWordIndex((current) => current - 1);
+      setCurrentInput(previousInput);
+      setMistakeAt(-1);
+      onTypingSound?.("type");
       return;
     }
 
@@ -309,7 +316,7 @@ function TypingPage({ Icon, onTypingSound }) {
               {mistakeAt >= 0
                 ? "Wrong letters stay red — press Space for the next word."
                 : started
-                  ? "Press Space to move to the next word."
+                  ? "Space: next word · Backspace on empty: previous word."
                   : "Click the line and start typing."}
             </p>
           </>

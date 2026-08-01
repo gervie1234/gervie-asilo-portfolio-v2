@@ -12,6 +12,9 @@
   --line-strong: #3a3c3f;
   --accent: #d6ff64;
   --accent-2: #ff825c;
+  --typing-error: #ff5752;
+  --typing-key-active: #f7f6f1;
+  --typing-key-active-text: #101112;
   --sidebar: rgba(11, 12, 13, 0.94);
   --mono: "DM Mono", "SFMono-Regular", Consolas, monospace;
   --sans: "Manrope", "Segoe UI", sans-serif;
@@ -30,6 +33,7 @@
   --line-strong: #9fa19a;
   --accent: #637e00;
   --accent-2: #c94728;
+  --typing-error: #b42318;
   --sidebar: rgba(239, 238, 233, 0.94);
 }
 
@@ -3658,12 +3662,12 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 }
 
 .typing-copy .is-error {
-  color: var(--accent-2);
-  background: color-mix(in srgb, var(--accent-2) 13%, transparent);
+  color: var(--typing-error);
+  background: color-mix(in srgb, var(--typing-error) 13%, transparent);
 }
 
 .typing-copy .is-missed {
-  color: color-mix(in srgb, var(--accent-2) 72%, var(--text-faint));
+  color: var(--typing-error);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
@@ -3750,9 +3754,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 
 .typing-key-row span.is-active {
   transform: translateY(2px);
-  border-color: var(--accent);
-  color: var(--accent);
-  box-shadow: none;
+  border-color: var(--typing-key-active);
+  background: var(--typing-key-active);
+  color: var(--typing-key-active-text);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--typing-key-active) 22%, transparent);
 }
 
 .typing-key-row .space-key {
@@ -3768,7 +3773,7 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 }
 
 .typing-hint.is-error {
-  color: var(--accent-2);
+  color: var(--typing-error);
 }
 
 .typing-result {
