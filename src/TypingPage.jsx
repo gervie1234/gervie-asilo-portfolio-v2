@@ -1,25 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const commonWords = (
-  "about after again all also always and any around ask back because before best better big both bring build but call can " +
-  "change check clear close come could day do down each easy even every feel find first follow for form from get give go good " +
-  "great group have help here high home how idea if in into it just keep kind know last learn left life like little long look " +
-  "make many may me more most move much my need never new next no not now of off old on one only open or other our out over " +
-  "page people place plan play point put right run same say see seem show simple small so some start still take team tell than " +
-  "that the their them then there these they thing think this time to together too turn two up us use very want way we well " +
-  "what when where which while who why will with word work world would write year you your app code design"
-).split(" ");
+const simplePassages = [
+  "the sun is bright and the sky looks clear today",
+  "i like to build simple things that help people",
+  "we can learn new skills one small step at a time",
+  "good ideas become better when we share them with others",
+  "my goal is to make every project easy to use",
+  "a clean design helps people find what they need faster",
+  "small changes can make a big difference in our work",
+  "the best way to improve is to practice every day",
+  "our team works together to solve one problem at a time",
+  "take a short break and come back with a clear mind",
+  "simple code is easier to read change and maintain",
+  "every good project starts with a clear and useful plan",
+];
 
 function createPassage(previousPassage = "") {
-  const wordCount = 12 + Math.floor(Math.random() * 4);
-  const words = [];
-
-  while (words.length < wordCount) {
-    const candidate = commonWords[Math.floor(Math.random() * commonWords.length)];
-    if (candidate !== words.at(-1)) words.push(candidate);
-  }
-
-  const nextPassage = words.join(" ");
+  const nextPassage = simplePassages[Math.floor(Math.random() * simplePassages.length)];
   return nextPassage === previousPassage ? createPassage(previousPassage) : nextPassage;
 }
 
