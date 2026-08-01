@@ -174,6 +174,14 @@ function TypingPage({ Icon, onTypingSound }) {
         setMistakeAt(-1);
       }
 
+      if (currentWordIndex === passageWords.length - 1 && nextValue === targetWord) {
+        setCompletedWords((current) => [...current, nextValue]);
+        setCurrentInput("");
+        setMistakeAt(-1);
+        finishTest();
+        return;
+      }
+
       setCurrentInput(nextValue);
       return;
     }
