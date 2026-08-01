@@ -1,21 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const commonWords = (
-  "about above across action after again against always among answer around become before begin behind believe better between " +
-  "bring build business called change check choose clear close common complete consider continue correct course create decide " +
-  "design detail develop different direct during early easy effect enough every example experience explain family feel follow " +
-  "form found friend future general give good great group happen help high important include information interest keep kind " +
-  "know large learn level light little long look make many matter mean might modern move much need never next number offer " +
-  "open order other people place plan point possible present problem process product program provide public question real " +
-  "reason remember result right same say school seem service should show simple small software something start state still " +
-  "story strong study system take team tell than thing think through time together turn understand use useful usually value " +
-  "want water way well where while without word work world would write year young ability approach careful challenge " +
-  "communication confidence connect creative dependable digital discover efficient focus improve interface maintain method " +
-  "practice quality reliable solution thoughtful workflow"
+  "about after again all also always and any around ask back because before best better big both bring build but call can " +
+  "change check clear close come could day do down each easy even every feel find first follow for form from get give go good " +
+  "great group have help here high home how idea if in into it just keep kind know last learn left life like little long look " +
+  "make many may me more most move much my need never new next no not now of off old on one only open or other our out over " +
+  "page people place plan play point put right run same say see seem show simple small so some start still take team tell than " +
+  "that the their them then there these they thing think this time to together too turn two up us use very want way we well " +
+  "what when where which while who why will with word work world would write year you your app code design"
 ).split(" ");
 
 function createPassage(previousPassage = "") {
-  const wordCount = 24 + Math.floor(Math.random() * 5);
+  const wordCount = 12 + Math.floor(Math.random() * 4);
   const words = [];
 
   while (words.length < wordCount) {
