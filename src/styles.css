@@ -3547,7 +3547,7 @@ html[data-route-transitioning] main {
 .playground-game-switcher {
   width: max-content;
   display: inline-grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 3px;
   margin-top: 24px;
   padding: 3px;
@@ -4202,6 +4202,173 @@ html[data-route-transitioning] main {
   color: var(--accent);
 }
 
+/* Stack Climber playground */
+.climber-lab {
+  margin-top: 32px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 76%, transparent);
+}
+
+.climber-toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(300px, 1fr);
+  gap: 36px;
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.climber-toolbar .typing-shortcuts {
+  margin: 0;
+}
+
+.climber-toolbar .typing-shortcuts kbd + kbd {
+  margin-left: -5px;
+}
+
+.climber-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.climber-stats > div {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.climber-stats strong {
+  font: 500 20px/1 var(--mono);
+  letter-spacing: -.05em;
+}
+
+.climber-stats span {
+  color: var(--text-faint);
+  font: 400 8px var(--mono);
+  letter-spacing: .14em;
+}
+
+.climber-arena {
+  position: relative;
+  min-height: 500px;
+  overflow: hidden;
+  background:
+    linear-gradient(to right, transparent 49.9%, color-mix(in srgb, var(--line) 35%, transparent) 50%, transparent 50.1%),
+    radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 40%),
+    radial-gradient(circle, color-mix(in srgb, var(--text-faint) 35%, transparent) .7px, transparent .8px);
+  background-size: auto, auto, 22px 22px;
+}
+
+.climber-arena canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 500px;
+  display: block;
+  outline: 0;
+}
+
+.climber-arena canvas:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.climber-message {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 34px;
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 34%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.climber-avatar {
+  width: 54px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--text);
+  border-radius: 12px;
+  background: var(--accent);
+  color: #111;
+  font: 600 12px var(--mono);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--accent) 15%, transparent);
+  transform: rotate(-4deg);
+}
+
+.climber-message h2 {
+  margin: 28px 0 0;
+  font: 500 clamp(28px, 4vw, 42px)/1 var(--sans);
+  letter-spacing: -.055em;
+}
+
+.climber-message > p {
+  max-width: 440px;
+  margin: 16px 0 0;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.climber-result > strong {
+  margin-top: 20px;
+  font: 500 clamp(78px, 10vw, 112px)/.84 var(--mono);
+  letter-spacing: -.09em;
+}
+
+.climber-result > span:not(.typing-result-mode) {
+  margin-top: 16px;
+  color: var(--text-faint);
+  font: 400 8px var(--mono);
+  letter-spacing: .15em;
+}
+
+.climber-result > p {
+  color: var(--text-faint);
+  font: 400 10px var(--mono);
+}
+
+.climber-touch-controls {
+  position: absolute;
+  z-index: 4;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.climber-touch-controls button {
+  width: 58px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--surface-raised) 82%, transparent);
+  color: var(--text-soft);
+  font: 500 17px var(--mono);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  transition: transform 80ms ease, background-color 80ms ease, color 80ms ease;
+}
+
+.climber-touch-controls button:active {
+  transform: translateY(2px);
+  background: var(--text);
+  color: var(--bg);
+}
+
 @media (max-width: 920px) {
   .typing-page {
     padding-top: 104px;
@@ -4225,6 +4392,11 @@ html[data-route-transitioning] main {
     grid-template-columns: 1fr;
     gap: 18px;
   }
+
+  .climber-toolbar {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -4237,7 +4409,12 @@ html[data-route-transitioning] main {
   }
 
   .playground-game-switcher {
+    width: min(100%, 320px);
     margin-top: 20px;
+  }
+
+  .playground-game-switcher a {
+    padding-inline: 8px;
   }
 
   .typing-lab {
@@ -4324,6 +4501,41 @@ html[data-route-transitioning] main {
   .aim-target {
     width: 54px;
     height: 54px;
+  }
+
+  .climber-lab {
+    margin-inline: -4px;
+    border-radius: 12px;
+  }
+
+  .climber-toolbar {
+    padding: 18px;
+  }
+
+  .climber-stats {
+    gap: 10px;
+  }
+
+  .climber-stats strong {
+    font-size: 18px;
+  }
+
+  .climber-arena {
+    min-height: 430px;
+  }
+
+  .climber-arena canvas {
+    height: 430px;
+  }
+
+  .climber-message {
+    padding: 26px;
+  }
+
+  .climber-touch-controls {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
   }
 }
 

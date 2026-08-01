@@ -6,6 +6,7 @@ import ProjectsPage from "./ProjectsPage";
 import DesignsPage from "./DesignsPage";
 import TypingPage from "./TypingPage";
 import AimLabPage from "./AimLabPage";
+import StackClimberPage from "./StackClimberPage";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
@@ -18,7 +19,7 @@ const navItems = [
   { id: "contact", label: "Contact", icon: "mail" },
 ];
 
-const appPagePaths = new Set(["/", "/stack", "/contact", "/projects", "/designs", "/playground", "/aim-lab"]);
+const appPagePaths = new Set(["/", "/stack", "/contact", "/projects", "/designs", "/playground", "/aim-lab", "/stack-climber"]);
 
 function getRouteKey(url = window.location) {
   return `${url.pathname}${url.search}${url.hash}`;
@@ -574,7 +575,8 @@ function App() {
   const isProjectsPage = normalizedPath === "/projects";
   const isDesignsPage = normalizedPath === "/designs";
   const isAimLabPage = normalizedPath === "/aim-lab";
-  const isPlaygroundPage = normalizedPath === "/playground" || isAimLabPage;
+  const isStackClimberPage = normalizedPath === "/stack-climber";
+  const isPlaygroundPage = normalizedPath === "/playground" || isAimLabPage || isStackClimberPage;
   const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : isPlaygroundPage ? "playground" : "profile");
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
@@ -812,7 +814,9 @@ function App() {
             : isDesignsPage
               ? <DesignsPage Icon={Icon} designs={designHighlights} />
               : isPlaygroundPage
-                ? isAimLabPage
+                ? isStackClimberPage
+                  ? <StackClimberPage Icon={Icon} onGameSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
+                  : isAimLabPage
                   ? <AimLabPage Icon={Icon} onAimSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
                   : <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
               : isStackPage

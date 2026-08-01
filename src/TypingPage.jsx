@@ -309,8 +309,9 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
           <p className="eyebrow">07 / PLAYGROUND</p>
           <h1 id="typing-title">Typing <span>Lab.</span></h1>
           <nav className="playground-game-switcher" aria-label="Playground games">
-            <a className="is-active" href="/playground" aria-current="page">Typing Test</a>
+            <a className="is-active" href="/playground" aria-current="page">Typing</a>
             <a href="/aim-lab">Aim Lab</a>
+            <a href="/stack-climber">Climber</a>
           </nav>
         </div>
         <p>A quick focus break. Type the line, check your pace, then run it again.</p>

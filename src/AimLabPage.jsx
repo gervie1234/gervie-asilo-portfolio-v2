@@ -117,8 +117,9 @@ function AimLabPage({ Icon, onAimSound, onNavigate }) {
           <p className="eyebrow">07 / PLAYGROUND</p>
           <h1 id="aim-title">Aim <span>Lab.</span></h1>
           <nav className="playground-game-switcher" aria-label="Playground games">
-            <a href="/playground">Typing Test</a>
+            <a href="/playground">Typing</a>
             <a className="is-active" href="/aim-lab" aria-current="page">Aim Lab</a>
+            <a href="/stack-climber">Climber</a>
           </nav>
         </div>
         <p>A quick mouse accuracy drill. Hit every target, avoid empty space, and beat your reaction time.</p>
