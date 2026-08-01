@@ -3650,6 +3650,18 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   background: color-mix(in srgb, var(--accent-2) 13%, transparent);
 }
 
+.typing-copy .is-recent-error {
+  display: inline-block;
+  border-radius: 2px;
+  animation: typing-error 220ms ease-out;
+}
+
+@keyframes typing-error {
+  25% { transform: translateX(-3px); }
+  55% { transform: translateX(3px); }
+  80% { transform: translateX(-1px); }
+}
+
 .typing-copy .is-current::after {
   content: "";
   position: absolute;
@@ -3724,6 +3736,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   color: var(--text-faint);
   font: 400 9px var(--mono);
   letter-spacing: .04em;
+}
+
+.typing-hint.is-error {
+  color: var(--accent-2);
 }
 
 .typing-result {
@@ -3891,6 +3907,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 
 @media (prefers-reduced-motion: reduce) {
   .typing-copy .is-current::after {
+    animation: none;
+  }
+
+  .typing-copy .is-recent-error {
     animation: none;
   }
 

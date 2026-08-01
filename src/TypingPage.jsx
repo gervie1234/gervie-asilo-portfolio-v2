@@ -1,13 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-const passages = [
-  "clean systems turn complex work into simple reliable experiences",
-  "design with intent build with care test the details ship with confidence",
-  "useful software begins with listening and improves through iteration",
-  "clear interfaces help people move faster with fewer mistakes",
-  "good work connects thoughtful design dependable code and real outcomes",
-  "small improvements repeated with purpose can transform an entire workflow",
-];
+const commonWords = (
+  "about above across action after again against always among answer around become before begin behind believe better between " +
+  "bring build business called change check choose clear close common complete consider continue correct course create decide " +
+  "design detail develop different direct during early easy effect enough every example experience explain family feel follow " +
+  "form found friend future general give good great group happen help high important include information interest keep kind " +
+  "know large learn level light little long look make many matter mean might modern move much need never next number offer " +
+  "open order other people place plan point possible present problem process product program provide public question real " +
+  "reason remember result right same say school seem service should show simple small software something start state still " +
+  "story strong study system take team tell than thing think through time together turn understand use useful usually value " +
+  "want water way well where while without word work world would write year young ability approach careful challenge " +
+  "communication confidence connect creative dependable digital discover efficient focus improve interface maintain method " +
+  "practice quality reliable solution thoughtful workflow"
+).split(" ");
+
+function createPassage(previousPassage = "") {
+  const wordCount = 24 + Math.floor(Math.random() * 5);
+  const words = [];
+
+  while (words.length < wordCount) {
+    const candidate = commonWords[Math.floor(Math.random() * commonWords.length)];
+    if (candidate !== words.at(-1)) words.push(candidate);
+  }
+
+  const nextPassage = words.join(" ");
+  return nextPassage === previousPassage ? createPassage(previousPassage) : nextPassage;
+}
 
 const keyboardRows = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -21,27 +39,30 @@ function getStoredBest() {
 }
 
 function TypingPage({ Icon, onTypingSound }) {
-  const [passageIndex, setPassageIndex] = useState(0);
+  const [passage, setPassage] = useState(createPassage);
   const [typed, setTyped] = useState("");
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [activeKey, setActiveKey] = useState("");
+  const [attempts, setAttempts] = useState(0);
+  const [mistakes, setMistakes] = useState(0);
+  const [mistakeAt, setMistakeAt] = useState(-1);
   const [best, setBest] = useState(getStoredBest);
   const inputRef = useRef(null);
   const startTimeRef = useRef(0);
   const keyTimerRef = useRef(null);
+  const mistakeTimerRef = useRef(null);
   const previousBestRef = useRef(best);
 
-  const passage = passages[passageIndex];
   const correctCharacters = useMemo(
     () => typed.split("").reduce((total, character, index) => total + (character === passage[index] ? 1 : 0), 0),
     [typed, passage],
   );
   const minutes = Math.max(elapsed / 60, 1 / 600);
   const wpm = started ? Math.max(0, Math.round((correctCharacters / 5) / minutes)) : 0;
-  const rawWpm = started ? Math.max(0, Math.round((typed.length / 5) / minutes)) : 0;
-  const accuracy = typed.length ? Math.round((correctCharacters / typed.length) * 100) : 100;
+  const rawWpm = started ? Math.max(0, Math.round((attempts / 5) / minutes)) : 0;
+  const accuracy = attempts ? Math.max(0, Math.round(((attempts - mistakes) / attempts) * 100)) : 100;
   const isNewBest = finished && wpm > previousBestRef.current;
 
   useEffect(() => {
@@ -64,16 +85,22 @@ function TypingPage({ Icon, onTypingSound }) {
     localStorage.setItem("portfolio-typing-best-v1", String(wpm));
   }, [best, finished, wpm]);
 
-  useEffect(() => () => window.clearTimeout(keyTimerRef.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(keyTimerRef.current);
+    window.clearTimeout(mistakeTimerRef.current);
+  }, []);
 
   const restartTest = () => {
     previousBestRef.current = best;
-    setPassageIndex((current) => (current + 1) % passages.length);
+    setPassage((current) => createPassage(current));
     setTyped("");
     setStarted(false);
     setFinished(false);
     setElapsed(0);
     setActiveKey("");
+    setAttempts(0);
+    setMistakes(0);
+    setMistakeAt(-1);
     window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 0);
   };
 
@@ -82,22 +109,39 @@ function TypingPage({ Icon, onTypingSound }) {
 
     const nextValue = event.target.value.slice(0, passage.length);
     if (nextValue.length > typed.length) {
-      const typedIndex = nextValue.length - 1;
-      onTypingSound?.(nextValue[typedIndex] === passage[typedIndex] ? "type" : "error");
-    }
+      const typedIndex = typed.length;
+      const nextCharacter = nextValue[typedIndex];
+      const isCorrectKey = nextCharacter === passage[typedIndex];
 
-    if (!started && nextValue.length > 0) {
-      startTimeRef.current = performance.now();
-      setStarted(true);
+      setAttempts((current) => current + 1);
+
+      if (!started) {
+        startTimeRef.current = performance.now();
+        setStarted(true);
+      }
+
+      if (!isCorrectKey) {
+        onTypingSound?.("error");
+        setMistakes((current) => current + 1);
+        setMistakeAt(typedIndex);
+        window.clearTimeout(mistakeTimerRef.current);
+        mistakeTimerRef.current = window.setTimeout(() => setMistakeAt(-1), 700);
+      } else {
+        onTypingSound?.("type");
+        setMistakeAt(-1);
+      }
+
+      setTyped(nextValue);
+
+      if (nextValue.length === passage.length) {
+        const finalElapsed = Math.max((performance.now() - startTimeRef.current) / 1000, 0.1);
+        setElapsed(finalElapsed);
+        setFinished(true);
+      }
+      return;
     }
 
     setTyped(nextValue);
-
-    if (nextValue.length === passage.length) {
-      const finalElapsed = Math.max((performance.now() - startTimeRef.current) / 1000, 0.1);
-      setElapsed(finalElapsed);
-      setFinished(true);
-    }
   };
 
   const handleKeyDown = (event) => {
@@ -148,7 +192,9 @@ function TypingPage({ Icon, onTypingSound }) {
               <p id="typing-instructions" className="typing-copy" aria-hidden="true">
                 {passage.split("").map((character, index) => {
                   const state = index < typed.length
-                    ? (typed[index] === character ? "is-correct" : "is-error")
+                    ? (typed[index] === character
+                      ? "is-correct"
+                      : `is-error ${index === mistakeAt ? "is-recent-error" : ""}`)
                     : index === typed.length
                       ? "is-current"
                       : "";
@@ -179,7 +225,13 @@ function TypingPage({ Icon, onTypingSound }) {
               <div className="typing-key-row"><span className={`space-key ${activeKey === "space" ? "is-active" : ""}`}>SPACE</span></div>
             </div>
 
-            <p className="typing-hint">{started ? "Keep going — corrections are allowed." : "Click the line and start typing."}</p>
+            <p className={`typing-hint ${mistakeAt >= 0 ? "is-error" : ""}`} aria-live="polite">
+              {mistakeAt >= 0
+                ? "Wrong letter marked in red — keep typing."
+                : started
+                  ? "Keep going — the cursor shows the next letter."
+                  : "Click the line and start typing."}
+            </p>
           </>
         ) : (
           <div className="typing-result" aria-live="polite">
