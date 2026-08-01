@@ -40,7 +40,9 @@ function getStoredBest() {
 
 function TypingPage({ Icon, onTypingSound }) {
   const [passage, setPassage] = useState(createPassage);
-  const [typed, setTyped] = useState("");
+  const [completedWords, setCompletedWords] = useState([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentInput, setCurrentInput] = useState("");
   const [started, setStarted] = useState(false);
   const [finished, setFinished] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -55,9 +57,22 @@ function TypingPage({ Icon, onTypingSound }) {
   const mistakeTimerRef = useRef(null);
   const previousBestRef = useRef(best);
 
+  const passageWords = useMemo(() => passage.split(" "), [passage]);
   const correctCharacters = useMemo(
-    () => typed.split("").reduce((total, character, index) => total + (character === passage[index] ? 1 : 0), 0),
-    [typed, passage],
+    () => {
+      const committedCorrect = completedWords.reduce((total, typedWord, wordIndex) => (
+        total + typedWord.split("").reduce(
+          (wordTotal, character, characterIndex) => wordTotal + (character === passageWords[wordIndex]?.[characterIndex] ? 1 : 0),
+          0,
+        )
+      ), 0);
+      const currentCorrect = currentInput.split("").reduce(
+        (total, character, index) => total + (character === passageWords[currentWordIndex]?.[index] ? 1 : 0),
+        0,
+      );
+      return committedCorrect + currentCorrect;
+    },
+    [completedWords, currentInput, currentWordIndex, passageWords],
   );
   const minutes = Math.max(elapsed / 60, 1 / 600);
   const wpm = started ? Math.max(0, Math.round((correctCharacters / 5) / minutes)) : 0;
@@ -93,7 +108,9 @@ function TypingPage({ Icon, onTypingSound }) {
   const restartTest = () => {
     previousBestRef.current = best;
     setPassage((current) => createPassage(current));
-    setTyped("");
+    setCompletedWords([]);
+    setCurrentWordIndex(0);
+    setCurrentInput("");
     setStarted(false);
     setFinished(false);
     setElapsed(0);
@@ -104,14 +121,47 @@ function TypingPage({ Icon, onTypingSound }) {
     window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 0);
   };
 
+  const finishTest = () => {
+    const finalElapsed = Math.max((performance.now() - startTimeRef.current) / 1000, 0.1);
+    setElapsed(finalElapsed);
+    setFinished(true);
+  };
+
+  const commitCurrentWord = () => {
+    if (!currentInput) return;
+
+    const targetWord = passageWords[currentWordIndex];
+    const missingCharacters = Math.max(targetWord.length - currentInput.length, 0);
+    const wordHasError = missingCharacters > 0 || currentInput.split("").some((character, index) => character !== targetWord[index]);
+
+    if (missingCharacters) {
+      setAttempts((current) => current + missingCharacters);
+      setMistakes((current) => current + missingCharacters);
+    }
+
+    onTypingSound?.(wordHasError ? "error" : "type");
+    setCompletedWords((current) => [...current, currentInput]);
+    setMistakeAt(-1);
+
+    if (currentWordIndex === passageWords.length - 1) {
+      setCurrentInput("");
+      finishTest();
+      return;
+    }
+
+    setCurrentWordIndex((current) => current + 1);
+    setCurrentInput("");
+  };
+
   const handleChange = (event) => {
     if (finished) return;
 
-    const nextValue = event.target.value.slice(0, passage.length);
-    if (nextValue.length > typed.length) {
-      const typedIndex = typed.length;
+    const targetWord = passageWords[currentWordIndex];
+    const nextValue = event.target.value.replace(/\s/g, "").slice(0, targetWord.length + 12);
+    if (nextValue.length > currentInput.length) {
+      const typedIndex = currentInput.length;
       const nextCharacter = nextValue[typedIndex];
-      const isCorrectKey = nextCharacter === passage[typedIndex];
+      const isCorrectKey = nextCharacter === targetWord[typedIndex];
 
       setAttempts((current) => current + 1);
 
@@ -131,17 +181,15 @@ function TypingPage({ Icon, onTypingSound }) {
         setMistakeAt(-1);
       }
 
-      setTyped(nextValue);
+      setCurrentInput(nextValue);
 
-      if (nextValue.length === passage.length) {
-        const finalElapsed = Math.max((performance.now() - startTimeRef.current) / 1000, 0.1);
-        setElapsed(finalElapsed);
-        setFinished(true);
+      if (currentWordIndex === passageWords.length - 1 && nextValue.length === targetWord.length) {
+        finishTest();
       }
       return;
     }
 
-    setTyped(nextValue);
+    setCurrentInput(nextValue);
   };
 
   const handleKeyDown = (event) => {
@@ -161,6 +209,11 @@ function TypingPage({ Icon, onTypingSound }) {
     setActiveKey(nextKey);
     window.clearTimeout(keyTimerRef.current);
     keyTimerRef.current = window.setTimeout(() => setActiveKey(""), 120);
+
+    if (event.key === " ") {
+      event.preventDefault();
+      commitCurrentWord();
+    }
   };
 
   return (
@@ -190,21 +243,48 @@ function TypingPage({ Icon, onTypingSound }) {
 
             <div className="typing-passage" onClick={() => inputRef.current?.focus()}>
               <p id="typing-instructions" className="typing-copy" aria-hidden="true">
-                {passage.split("").map((character, index) => {
-                  const state = index < typed.length
-                    ? (typed[index] === character
-                      ? "is-correct"
-                      : `is-error ${index === mistakeAt ? "is-recent-error" : ""}`)
-                    : index === typed.length
-                      ? "is-current"
-                      : "";
-                  return <span className={state} key={`${character}-${index}`}>{character}</span>;
+                {passageWords.map((targetWord, wordIndex) => {
+                  const isCompleted = wordIndex < currentWordIndex;
+                  const isCurrent = wordIndex === currentWordIndex;
+                  const typedWord = isCompleted ? completedWords[wordIndex] : isCurrent ? currentInput : "";
+                  const characterCount = isCompleted || isCurrent
+                    ? Math.max(targetWord.length, typedWord.length)
+                    : targetWord.length;
+                  const characters = [];
+
+                  for (let characterIndex = 0; characterIndex < characterCount; characterIndex += 1) {
+                    if (isCurrent && characterIndex === typedWord.length) {
+                      characters.push(<span className="typing-word-caret" key={`caret-${wordIndex}`} />);
+                    }
+
+                    const hasTypedCharacter = characterIndex < typedWord.length;
+                    const displayCharacter = hasTypedCharacter ? typedWord[characterIndex] : (targetWord[characterIndex] || "");
+                    const state = hasTypedCharacter
+                      ? (typedWord[characterIndex] === targetWord[characterIndex]
+                        ? "is-correct"
+                        : `is-error ${isCurrent && characterIndex === mistakeAt ? "is-recent-error" : ""}`)
+                      : isCompleted
+                        ? "is-missed"
+                        : "";
+
+                    characters.push(<span className={state} key={`${wordIndex}-${characterIndex}`}>{displayCharacter}</span>);
+                  }
+
+                  if (isCurrent && typedWord.length >= characterCount) {
+                    characters.push(<span className="typing-word-caret" key={`caret-end-${wordIndex}`} />);
+                  }
+
+                  return (
+                    <span className={`typing-word ${isCurrent ? "is-active" : ""}`} key={`${targetWord}-${wordIndex}`}>
+                      {characters}
+                    </span>
+                  );
                 })}
               </p>
               <textarea
                 ref={inputRef}
                 className="typing-capture"
-                value={typed}
+                value={currentInput}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 onPaste={(event) => event.preventDefault()}
@@ -227,9 +307,9 @@ function TypingPage({ Icon, onTypingSound }) {
 
             <p className={`typing-hint ${mistakeAt >= 0 ? "is-error" : ""}`} aria-live="polite">
               {mistakeAt >= 0
-                ? "Wrong letter marked in red — keep typing."
+                ? "Wrong letters stay red — press Space for the next word."
                 : started
-                  ? "Keep going — the cursor shows the next letter."
+                  ? "Press Space to move to the next word."
                   : "Click the line and start typing."}
             </p>
           </>

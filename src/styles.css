@@ -3629,11 +3629,23 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 
 .typing-copy {
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: .55em;
+  row-gap: .16em;
   color: var(--text-faint);
   font: 400 clamp(18px, 2.1vw, 25px)/1.75 var(--mono);
   letter-spacing: -.035em;
   text-align: center;
   overflow-wrap: anywhere;
+}
+
+.typing-word {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .typing-copy span {
@@ -3648,6 +3660,23 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 .typing-copy .is-error {
   color: var(--accent-2);
   background: color-mix(in srgb, var(--accent-2) 13%, transparent);
+}
+
+.typing-copy .is-missed {
+  color: color-mix(in srgb, var(--accent-2) 72%, var(--text-faint));
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.typing-word-caret {
+  width: 2px;
+  height: 1.2em;
+  flex: 0 0 2px;
+  margin-inline: -1px;
+  border-radius: 1px;
+  background: var(--accent);
+  animation: typing-caret 850ms steps(1) infinite;
 }
 
 .typing-copy .is-recent-error {
@@ -3883,6 +3912,7 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   .typing-copy {
     font-size: 17px;
     line-height: 1.7;
+    justify-content: flex-start;
     text-align: left;
   }
 
@@ -3907,6 +3937,10 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
 
 @media (prefers-reduced-motion: reduce) {
   .typing-copy .is-current::after {
+    animation: none;
+  }
+
+  .typing-word-caret {
     animation: none;
   }
 
