@@ -93,8 +93,9 @@ function ContactPage({ Icon }) {
             <li><span>03</span><div><strong>Personal reply</strong><p>I’ll respond by email with the clearest next step.</p></div></li>
           </ol>
           <div className="contact-direct">
-            <span>Prefer regular email?</span>
+            <span>Prefer email or a quick call?</span>
             <a href="mailto:gervieasilo@gmail.com">gervieasilo@gmail.com <Icon name="arrow" size={13} /></a>
+            <a href="tel:+639184001878"><Icon name="phone" size={13} /> 0918-400-1878</a>
           </div>
         </aside>
 

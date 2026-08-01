@@ -336,6 +336,7 @@ function Icon({ name, size = 17 }) {
     play: <><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4Z" /></>,
     restart: <><path d="M20 7v5h-5" /><path d="M19 12a7 7 0 1 0-1.6 4.4" /></>,
     mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
+    phone: <path d="M7.2 3.5 10 8.3 7.8 10a14 14 0 0 0 6.2 6.2l1.7-2.2 4.8 2.8-.7 3.1c-.2.9-1 1.6-2 1.6C9.4 21 3 14.6 2.5 6.2c0-1 .7-1.8 1.6-2Z" />,
     menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
     close: <><path d="m6 6 12 12M18 6 6 18" /></>,
     sun: <><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>,
@@ -544,6 +545,10 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
             </a>
           </div>
           <p className="contact-label">WEB APPS, BUSINESS SYSTEMS<br />DESIGN &amp; TECHNICAL SUPPORT</p>
+          <a className="sidebar-phone" href="tel:+639184001878" aria-label="Call Gervie Asilo at 0918 400 1878">
+            <Icon name="phone" size={14} />
+            <span>0918-400-1878</span>
+          </a>
           <a
             className="resume-download"
             href="/Gervie-Asilo-Resume-2026.pdf"

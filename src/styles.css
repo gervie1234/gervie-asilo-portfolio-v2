@@ -299,6 +299,21 @@ a {
   letter-spacing: 0.04em;
 }
 
+.sidebar-phone {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: var(--text-soft);
+  font: 500 11px var(--mono);
+  letter-spacing: 0.025em;
+  transition: color 180ms ease;
+}
+
+.sidebar-phone:hover {
+  color: var(--accent);
+}
 .resume-download {
   width: 100%;
   min-height: 44px;
@@ -2386,6 +2401,11 @@ footer a:hover {
   transition: color 180ms ease;
 }
 
+.contact-direct a + a {
+  display: flex;
+  width: fit-content;
+  margin-top: 2px;
+}
 .contact-direct a:hover {
   color: var(--accent);
 }
