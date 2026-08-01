@@ -4,6 +4,7 @@ import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
 import DesignsPage from "./DesignsPage";
+import TypingPage from "./TypingPage";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
@@ -12,6 +13,7 @@ const navItems = [
   { id: "experience", label: "Experience", icon: "briefcase" },
   { id: "impact", label: "Impact", icon: "file" },
   { id: "stack", label: "Tech Stack", icon: "code" },
+  { id: "playground", label: "Playground", icon: "play" },
   { id: "contact", label: "Contact", icon: "mail" },
 ];
 
@@ -206,6 +208,39 @@ function playUiTone(type) {
     const context = sharedAudioContext;
     const startTime = context.currentTime + 0.002;
 
+    if (type === "type") {
+      playNoiseLayer(context, startTime, {
+        duration: 0.016,
+        volume: 0.012,
+        frequency: 2800,
+        filterType: "highpass",
+      });
+      playKeyLayer(context, startTime, {
+        frequency: 430,
+        endFrequency: 250,
+        duration: 0.018,
+        volume: 0.006,
+      });
+      return;
+    }
+
+    if (type === "error") {
+      playNoiseLayer(context, startTime, {
+        duration: 0.034,
+        volume: 0.022,
+        frequency: 720,
+        q: 1.8,
+      });
+      playKeyLayer(context, startTime, {
+        frequency: 170,
+        endFrequency: 88,
+        duration: 0.045,
+        volume: 0.012,
+        wave: "square",
+      });
+      return;
+    }
+
     if (type === "hover") {
       playNoiseLayer(context, startTime, {
         duration: 0.018,
@@ -277,6 +312,8 @@ function Icon({ name, size = 17 }) {
     file: <><path d="M6 3h9l3 3v15H6z" /><path d="M14 3v4h4M9 12h6M9 16h5" /></>,
     briefcase: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2" /></>,
     code: <><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14" /></>,
+    play: <><circle cx="12" cy="12" r="9" /><path d="m10 8 6 4-6 4Z" /></>,
+    restart: <><path d="M20 7v5h-5" /><path d="M19 12a7 7 0 1 0-1.6 4.4" /></>,
     mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></>,
     menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
     close: <><path d="m6 6 12 12M18 6 6 18" /></>,
@@ -387,7 +424,8 @@ function ProjectCard({ project, index }) {
   );
 }
 
-function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false }) {
+function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
+  const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage;
   const closeThenNavigate = (event, href) => {
     const isPrimaryClick = event.button === 0;
     const hasModifier = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
@@ -410,7 +448,7 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
   return (
     <>
       <header className="mobile-header">
-        <a className="brand" href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}>GERVIE ASILO</a>
+        <a className="brand" href={isSecondaryPage ? "/" : "#profile"}>GERVIE ASILO</a>
         <button className="icon-button" onClick={() => setOpen(!open)} aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open}>
           <Icon name={open ? "close" : "menu"} size={20} />
         </button>
@@ -419,8 +457,8 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
         <div className="sidebar-top">
           <a
             className="brand"
-            href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}
-            onClick={(event) => closeThenNavigate(event, (isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile")}
+            href={isSecondaryPage ? "/" : "#profile"}
+            onClick={(event) => closeThenNavigate(event, isSecondaryPage ? "/" : "#profile")}
           >
             GERVIE ASILO
           </a>
@@ -430,9 +468,10 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
         <nav aria-label="Main navigation">
           <p className="nav-label">INDEX</p>
           {navItems.map((item, index) => {
-            const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage;
             const href = item.id === "stack"
               ? (isSecondaryPage ? "/#stack-preview" : "#stack-preview")
+              : item.id === "playground"
+                ? "/playground"
               : item.id === "contact"
                 ? "/contact"
                 : item.id === "projects" && isSecondaryPage
@@ -450,6 +489,8 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
                   ? item.id === "projects"
                   : isDesignsPage
                     ? item.id === "designs"
+                    : isPlaygroundPage
+                      ? item.id === "playground"
                     : activeSection === item.id;
             return (
               <a
@@ -525,7 +566,8 @@ function App() {
   const isContactPage = normalizedPath === "/contact";
   const isProjectsPage = normalizedPath === "/projects";
   const isDesignsPage = normalizedPath === "/designs";
-  const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : "profile");
+  const isPlaygroundPage = normalizedPath === "/playground";
+  const [activeSection, setActiveSection] = useState(isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : isPlaygroundPage ? "playground" : "profile");
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("portfolio-sound") === "on");
@@ -645,7 +687,7 @@ function App() {
   }, [soundEnabled]);
 
   useEffect(() => {
-    if (isStackPage || isContactPage || isProjectsPage || isDesignsPage) return undefined;
+    if (isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage) return undefined;
 
     const sections = navItems
       .map(({ id }) => document.getElementById(id === "stack" ? "stack-preview" : id))
@@ -661,10 +703,10 @@ function App() {
     );
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, [isStackPage, isContactPage, isProjectsPage, isDesignsPage]);
+  }, [isStackPage, isContactPage, isProjectsPage, isDesignsPage, isPlaygroundPage]);
 
-  if (isStackPage || isContactPage || isProjectsPage || isDesignsPage) {
-    const activePage = isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : "designs";
+  if (isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage) {
+    const activePage = isStackPage ? "stack" : isContactPage ? "contact" : isProjectsPage ? "projects" : isDesignsPage ? "designs" : "playground";
     return (
       <div className="site-shell">
         <a className="skip-link" href="#main-content">Skip to main content</a>
@@ -680,6 +722,7 @@ function App() {
           isContactPage={isContactPage}
           isProjectsPage={isProjectsPage}
           isDesignsPage={isDesignsPage}
+          isPlaygroundPage={isPlaygroundPage}
         />
         <main id="main-content">
           <div className="ambient ambient-one" />
@@ -688,6 +731,8 @@ function App() {
             ? <ProjectsPage Icon={Icon} ProjectVisual={ProjectVisual} projects={projects} />
             : isDesignsPage
               ? <DesignsPage Icon={Icon} designs={designHighlights} />
+              : isPlaygroundPage
+                ? <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} />
               : isStackPage
               ? <TechStackPage Icon={Icon} />
               : <ContactPage Icon={Icon} />}
