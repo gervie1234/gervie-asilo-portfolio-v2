@@ -3906,6 +3906,16 @@ html[data-theme-transition="contract"]::view-transition-old(root) {
   color: #111;
 }
 
+.typing-restart kbd {
+  padding: 3px 6px;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg) 12%, transparent);
+  color: inherit;
+  font: 500 8px var(--mono);
+  letter-spacing: .04em;
+}
+
 .typing-page-footer {
   display: flex;
   justify-content: space-between;

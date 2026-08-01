@@ -154,6 +154,19 @@ function TypingPage({ Icon, onTypingSound }) {
     window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 0);
   };
 
+  useEffect(() => {
+    if (!finished) return undefined;
+
+    const handleResultShortcut = (event) => {
+      if (event.key !== "Enter" || event.repeat) return;
+      event.preventDefault();
+      restartTest();
+    };
+
+    window.addEventListener("keydown", handleResultShortcut);
+    return () => window.removeEventListener("keydown", handleResultShortcut);
+  }, [finished]);
+
   const selectMode = (nextMode) => {
     if (nextMode === mode) {
       inputRef.current?.focus({ preventScroll: true });
@@ -301,7 +314,9 @@ function TypingPage({ Icon, onTypingSound }) {
 
       <div className={`typing-lab ${finished ? "is-finished" : ""}`}>
         <div className="typing-shortcuts" aria-label="Keyboard shortcuts">
-          <span><kbd>tab</kbd> restart</span>
+          {finished
+            ? <span><kbd>enter</kbd> try again</span>
+            : <span><kbd>tab</kbd> restart</span>}
           <span><kbd>esc</kbd> close</span>
         </div>
 
@@ -417,8 +432,8 @@ function TypingPage({ Icon, onTypingSound }) {
             <p className={isNewBest ? "is-best" : ""}>
               {isNewBest ? `New personal best · ${wpm} wpm` : `Personal best · ${best} wpm`}
             </p>
-            <button className="typing-restart" type="button" onClick={restartTest}>
-              <Icon name="restart" size={15} />
+            <button className="typing-restart" type="button" aria-keyshortcuts="Enter" onClick={restartTest}>
+              <kbd>enter</kbd>
               Try again
             </button>
           </div>
