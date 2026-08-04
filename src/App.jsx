@@ -103,7 +103,7 @@ const projectVisualDefaults = [
   },
 ];
 
-const cmsApiBaseUrl = (import.meta.env.VITE_CMS_API_URL || "https://localhost:7252/api/public").replace(/\/$/, "");
+const cmsApiBaseUrl = String(import.meta.env.VITE_CMS_API_URL || "").trim().replace(/\/$/, "");
 
 const defaultProfile = {
   name: "Gervie Asilo",
@@ -143,6 +143,7 @@ function telephoneHref(phone = "") {
 
 function resolveCmsAsset(assetUrl = "") {
   if (!assetUrl.startsWith("/uploads/")) return assetUrl;
+  if (!cmsApiBaseUrl) return assetUrl;
   return `${new URL(cmsApiBaseUrl).origin}${assetUrl}`;
 }
 
@@ -709,6 +710,12 @@ const featuredProjects = projects.filter((project) => project.isFeatured);
   const portfolioIsLoading = projectsState === "loading" || designsState === "loading";
 
 useEffect(() => {
+    if (!cmsApiBaseUrl) {
+      setDesignsState("ready");
+      setProjectsState("ready");
+      return undefined;
+    }
+
     const controller = new AbortController();
 
     async function loadPortfolioContent() {

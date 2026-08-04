@@ -27,7 +27,8 @@ function getApiErrorMessage(payload, fallback) {
 }
 
 function ContactPage({ Icon, profile, apiBaseUrl }) {
-  const defaultEndpoint = `${String(apiBaseUrl || "").replace(/\/$/, "")}/contact-inquiries`;
+  const normalizedApiBaseUrl = String(apiBaseUrl || "").trim().replace(/\/$/, "");
+  const defaultEndpoint = normalizedApiBaseUrl ? `${normalizedApiBaseUrl}/contact-inquiries` : "";
   const endpoint = (import.meta.env.VITE_CONTACT_FORM_ENDPOINT || defaultEndpoint).trim();
   const phoneHref = `tel:${profile.phone.replace(/[^+\d]/g, "")}`;
   const [status, setStatus] = useState({ kind: "idle", message: "" });

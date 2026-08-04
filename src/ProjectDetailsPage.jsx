@@ -70,6 +70,12 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
+    if (!apiBaseUrl) {
+      setProject(null);
+      setStatus("unconfigured");
+      return undefined;
+    }
+
     const controller = new AbortController();
     setStatus("loading");
     setProject(null);
