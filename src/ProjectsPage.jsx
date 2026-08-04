@@ -1,4 +1,4 @@
-function ProjectsPage({ Icon, ProjectVisual, projects }) {
+function ProjectsPage({ Icon, ProjectVisual, projects, projectsState }) {
   return (
     <section className="projects-page content-width" aria-labelledby="projects-page-title">
       <header className="projects-page-header">
@@ -20,8 +20,6 @@ function ProjectsPage({ Icon, ProjectVisual, projects }) {
           <a
             className="archive-project-card"
             href={project.href}
-            target="_blank"
-            rel="noreferrer"
             key={project.title}
             aria-label={`Open ${project.title} project`}
           >
@@ -45,6 +43,12 @@ function ProjectsPage({ Icon, ProjectVisual, projects }) {
           </a>
         ))}
       </div>
+
+      {projects.length === 0 && (
+        <p className="projects-page-lead">
+          {projectsState === "loading" ? "Loading published projects…" : projectsState === "error" ? "Published projects are temporarily unavailable." : "No projects are currently published."}
+        </p>
+      )}
 
       <div className="projects-page-contact">
         <div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const projectTypes = [
   "Website or landing page",
@@ -17,12 +17,26 @@ const budgetRanges = [
   "₱150,000+",
 ];
 
-function ContactPage({ Icon }) {
-  const endpoint = (import.meta.env.VITE_CONTACT_FORM_ENDPOINT || "").trim();
+function getApiErrorMessage(payload, fallback) {
+  if (payload?.errors) {
+    const firstError = Object.values(payload.errors).flat().find(Boolean);
+    if (firstError) return firstError;
+  }
+
+  return payload?.detail || payload?.message || payload?.title || fallback;
+}
+
+function ContactPage({ Icon, profile, apiBaseUrl }) {
+  const defaultEndpoint = `${String(apiBaseUrl || "").replace(/\/$/, "")}/contact-inquiries`;
+  const endpoint = (import.meta.env.VITE_CONTACT_FORM_ENDPOINT || defaultEndpoint).trim();
+  const phoneHref = `tel:${profile.phone.replace(/[^+\d]/g, "")}`;
   const [status, setStatus] = useState({ kind: "idle", message: "" });
+  const submittingRef = useRef(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (submittingRef.current) return;
+
     const form = event.currentTarget;
     const formData = new FormData(form);
 
@@ -35,7 +49,7 @@ function ContactPage({ Icon }) {
     if (!endpoint) {
       setStatus({
         kind: "setup",
-        message: "Online delivery is being connected. For now, email me directly at gervieasilo@gmail.com.",
+        message: `Online delivery is being connected. For now, email me directly at ${profile.email}.`,
       });
       return;
     }
@@ -48,26 +62,44 @@ function ContactPage({ Icon }) {
       budget: String(formData.get("budget") || "").trim(),
       message: String(formData.get("message") || "").trim(),
       website: "",
-      source: window.location.href,
-      submittedAt: new Date().toISOString(),
+      sourceUrl: window.location.href,
     };
 
+    submittingRef.current = true;
     setStatus({ kind: "submitting", message: "Sending your project details…" });
 
     try {
-      await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
       });
+
+      const responsePayload = await response.json().catch(() => null);
+      if (!response.ok) {
+        const fallback = response.status === 429
+          ? "Too many attempts were sent. Please wait a minute and try again."
+          : "Your inquiry could not be saved. Please review the form and try again.";
+        throw new Error(getApiErrorMessage(responsePayload, fallback));
+      }
+
       form.reset();
-      setStatus({ kind: "success", message: "Message sent. I’ll reply through email as soon as I can." });
-    } catch {
+      setStatus({
+        kind: "success",
+        message: responsePayload?.message || "Message sent. I’ll reply through email as soon as I can.",
+      });
+    } catch (error) {
       setStatus({
         kind: "error",
-        message: "The form could not connect. Please retry or email gervieasilo@gmail.com directly.",
+        message: error instanceof Error && error.message
+          ? error.message
+          : `The form could not connect. Please retry or email ${profile.email} directly.`,
       });
+    } finally {
+      submittingRef.current = false;
     }
   };
 
@@ -89,17 +121,17 @@ function ContactPage({ Icon }) {
           <p className="contact-kicker">WHAT HAPPENS NEXT</p>
           <ol>
             <li><span>01</span><div><strong>Inquiry saved</strong><p>Your details are recorded in my private project tracker.</p></div></li>
-            <li><span>02</span><div><strong>Email notification</strong><p>I receive the full brief at gervieasilo@gmail.com.</p></div></li>
+            <li><span>02</span><div><strong>Email notification</strong><p>I receive the full brief at {profile.email}.</p></div></li>
             <li><span>03</span><div><strong>Personal reply</strong><p>I’ll respond by email with the clearest next step.</p></div></li>
           </ol>
           <div className="contact-direct">
             <span>Prefer email or a quick call?</span>
-            <a href="mailto:gervieasilo@gmail.com">gervieasilo@gmail.com <Icon name="arrow" size={13} /></a>
-            <a href="tel:+639184001878"><Icon name="phone" size={13} /> 0918-400-1878</a>
+            <a href={`mailto:${profile.email}`}>{profile.email} <Icon name="arrow" size={13} /></a>
+            <a href={phoneHref}><Icon name="phone" size={13} /> {profile.phone}</a>
           </div>
         </aside>
 
-        <form className="project-form" onSubmit={handleSubmit} noValidate={false}>
+        <form className="project-form" onSubmit={handleSubmit} noValidate={false} aria-busy={isSubmitting}>
           <div className="form-grid">
             <div className="form-field">
               <label htmlFor="contact-name">Name <span aria-hidden="true">*</span></label>

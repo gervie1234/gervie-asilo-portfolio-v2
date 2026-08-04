@@ -3,10 +3,12 @@ import { flushSync } from "react-dom";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
+import ProjectDetailsPage from "./ProjectDetailsPage";
 import DesignsPage from "./DesignsPage";
 import TypingPage from "./TypingPage";
 import AimLabPage from "./AimLabPage";
 import StackClimberPage from "./StackClimberPage";
+import BackendPreloader from "./BackendPreloader";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
@@ -20,6 +22,10 @@ const navItems = [
 ];
 
 const appPagePaths = new Set(["/", "/stack", "/contact", "/projects", "/designs", "/playground", "/aim-lab", "/stack-climber"]);
+
+function isAppPagePath(pathname) {
+  return appPagePaths.has(pathname) || /^\/projects\/[^/]+$/.test(pathname);
+}
 
 function getRouteKey(url = window.location) {
   return `${url.pathname}${url.search}${url.hash}`;
@@ -38,7 +44,7 @@ function scrollToRoute(url) {
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 }
 
-const designHighlights = [
+const designVisualDefaults = [
   {
     slug: "air-max-90",
     title: "Air Everywhere",
@@ -62,9 +68,10 @@ const designHighlights = [
   },
 ];
 
-const projects = [
+const projectVisualDefaults = [
   {
     number: "01",
+    slug: "megalight-information-management-system",
     label: "BUSINESS SYSTEM",
     title: "Megalight Information Management System",
     summary: "A full-scale internal platform connecting delivery receipts, sales, payments, warranties, inventory, and branch operations.",
@@ -76,6 +83,7 @@ const projects = [
   },
   {
     number: "02",
+    slug: "server-monitor",
     label: "BUSINESS SYSTEM",
     title: "Server Monitor",
     summary: "A lightweight .NET 9 dashboard for live server health, history, alerts, and Telegram notifications.",
@@ -85,6 +93,7 @@ const projects = [
   },
   {
     number: "03",
+    slug: "bahay-prime-realty",
     label: "REAL ESTATE",
     title: "BahayPrime Realty",
     summary: "A polished property experience for discovering premium homes and investments across the Philippines.",
@@ -93,6 +102,99 @@ const projects = [
     href: "https://gervieasilo.com/projects/bahay-prime-realty",
   },
 ];
+
+const cmsApiBaseUrl = (import.meta.env.VITE_CMS_API_URL || "https://localhost:7252/api/public").replace(/\/$/, "");
+
+const defaultProfile = {
+  name: "Gervie Asilo",
+  headline: "Full-stack developer and graphic designer",
+  location: "Metro Manila, Philippines",
+  availabilityText: "Available for freelance projects",
+  bioPrimary: "I’m a full-stack software developer and graphic designer building practical digital solutions with clean, modern design.",
+  bioSecondary: "I connect interfaces, backend systems, branding, and workflows so projects are easier to launch, manage, and improve.",
+  email: "gervieasilo@gmail.com",
+  phone: "0918-400-1878",
+  portraitUrl: "/gervie-asilo.jpg",
+  resumeUrl: "/Gervie-Asilo-Resume-2026.pdf",
+  seoTitle: "Gervie Asilo — Full-stack Developer and Graphic Designer",
+  seoDescription: "Portfolio of Gervie Asilo: full-stack development, business systems, graphic design, automation, and practical digital products.",
+};
+
+const defaultSocialLinks = [
+  { platform: "GitHub", label: "github", url: "https://github.com/gervie1234" },
+  { platform: "LinkedIn", label: "linkedin", url: "https://www.linkedin.com/in/gervieasilo/" },
+  { platform: "Facebook", label: "facebook", url: "https://www.facebook.com/gervieasilo" },
+  { platform: "Email", label: "email", url: "mailto:gervieasilo@gmail.com" },
+];
+
+const defaultMetrics = [
+  { value: "6", suffix: "+", label: "Years of experience" },
+  { value: "5", suffix: "+", label: "Years of IMS ownership" },
+  { value: "200", suffix: "+", label: "E-commerce listings" },
+  { value: "150K", suffix: "+", label: "Store followers reached" },
+];
+
+function telephoneHref(phone = "") {
+  const digits = phone.replace(/\D/g, "");
+  if (!digits) return "#contact";
+  if (digits.startsWith("0")) return `tel:+63${digits.slice(1)}`;
+  return `tel:+${digits}`;
+}
+
+function resolveCmsAsset(assetUrl = "") {
+  if (!assetUrl.startsWith("/uploads/")) return assetUrl;
+  return `${new URL(cmsApiBaseUrl).origin}${assetUrl}`;
+}
+
+function resolveCmsDesignImage(imageUrl = "") {
+  return resolveCmsAsset(imageUrl);
+}
+
+function resolveCmsProjectImage(imageUrl = "") {
+  return resolveCmsAsset(imageUrl);
+}
+
+function mapCmsProfile(profile = {}) {
+  return {
+    ...defaultProfile,
+    ...profile,
+    portraitUrl: resolveCmsAsset(profile.portraitUrl || defaultProfile.portraitUrl),
+    resumeUrl: resolveCmsAsset(profile.resumeUrl || defaultProfile.resumeUrl),
+  };
+}
+
+function mapCmsDesign(design) {
+  const visualDefaults = designVisualDefaults.find((item) => item.slug === design.slug) || {};
+  return {
+    ...visualDefaults,
+    slug: design.slug,
+    title: design.title,
+    category: design.category?.toUpperCase() || "DESIGN",
+    description: design.description || "",
+    image: resolveCmsDesignImage(design.imageUrl || visualDefaults.image),
+    alt: design.imageAlt || visualDefaults.alt || "",
+    href: design.externalUrl || "",
+    isFeatured: design.isFeatured,
+  };
+}
+
+function mapCmsProject(project, index) {
+  const visualDefaults = projectVisualDefaults.find((item) => item.slug === project.slug) || {};
+
+  return {
+    ...visualDefaults,
+    slug: project.slug,
+    number: project.number || String(index + 1).padStart(2, "0"),
+    label: project.category?.toUpperCase() || "PROJECT",
+    title: project.title,
+    summary: project.summary,
+    accent: project.accentColor || visualDefaults.accent || "#d6ff64",
+    image: resolveCmsProjectImage(project.featuredImageUrl || visualDefaults.image),
+    imageAlt: project.featuredImageAlt || visualDefaults.imageAlt || "",
+    href: `/projects/${project.slug}`,
+    isFeatured: project.isFeatured,
+  };
+}
 
 const careerImpact = [
   {
@@ -361,18 +463,26 @@ function SectionHeading({ number, children, action, actionHref = "#contact" }) {
   );
 }
 
-function Portrait() {
+function Portrait({ profile }) {
+  const initials = profile.name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <div className="portrait-wrap">
       <img
         className="portrait portrait-photo"
-        src="/gervie-asilo.jpg"
+        src={profile.portraitUrl}
         width="1080"
         height="1100"
-        alt="Gervie Asilo working at his computer"
+        alt={`${profile.name} working at a computer`}
       />
       <div className="portrait-wash" aria-hidden="true" />
-      <span className="portrait-index">GA / 2026</span>
+      <span className="portrait-index">{initials} / 2026</span>
     </div>
   );
 }
@@ -426,8 +536,6 @@ function ProjectCard({ project, index }) {
     <a
       className={`project-card project-card-${index + 1}`}
       href={project.href}
-      target="_blank"
-      rel="noreferrer"
       aria-label={`View ${project.title} project`}
     >
       <div className="project-kicker">
@@ -446,7 +554,7 @@ function ProjectCard({ project, index }) {
   );
 }
 
-function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
+function Sidebar({ profile, activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
   const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage;
   const closeThenNavigate = () => {
     setOpen(false);
@@ -455,7 +563,7 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
   return (
     <>
       <header className="mobile-header">
-        <a className="brand" href={isSecondaryPage ? "/" : "#profile"}>GERVIE ASILO</a>
+        <a className="brand" href={isSecondaryPage ? "/" : "#profile"}>{profile.name.toUpperCase()}</a>
         <button className="icon-button" onClick={() => setOpen(!open)} aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open}>
           <Icon name={open ? "close" : "menu"} size={20} />
         </button>
@@ -467,9 +575,9 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
             href={isSecondaryPage ? "/" : "#profile"}
             onClick={(event) => closeThenNavigate(event, isSecondaryPage ? "/" : "#profile")}
           >
-            GERVIE ASILO
+            {profile.name.toUpperCase()}
           </a>
-          <p className="sidebar-caption">FULL-STACK DEVELOPER + DESIGNER<br />METRO MANILA, PHILIPPINES</p>
+          <p className="sidebar-caption">{profile.headline.toUpperCase()}<br />{profile.location.toUpperCase()}</p>
         </div>
 
         <nav aria-label="Main navigation">
@@ -519,7 +627,7 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
             <div className="avatar-stack" aria-hidden="true">
               <i>G</i><i>A</i><i>UI</i><i>+</i>
             </div>
-            <p><span /> Available for freelance projects</p>
+            <p><span /> {profile.availabilityText}</p>
           </div>
           <div className="sidebar-actions">
             <button className="icon-button" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}>
@@ -545,15 +653,15 @@ function Sidebar({ activeSection, open, setOpen, theme, toggleTheme, soundEnable
             </a>
           </div>
           <p className="contact-label">WEB APPS, BUSINESS SYSTEMS<br />DESIGN &amp; TECHNICAL SUPPORT</p>
-          <a className="sidebar-phone" href="tel:+639184001878" aria-label="Call Gervie Asilo at 0918 400 1878">
+          <a className="sidebar-phone" href={telephoneHref(profile.phone)} aria-label={`Call ${profile.name} at ${profile.phone}`}>
             <Icon name="phone" size={14} />
-            <span>0918-400-1878</span>
+            <span>{profile.phone}</span>
           </a>
           <a
             className="resume-download"
-            href="/Gervie-Asilo-Resume-2026.pdf"
-            download="Gervie-Asilo-Resume-2026.pdf"
-            aria-label="Download Gervie Asilo's 2026 resume as a PDF"
+            href={profile.resumeUrl}
+            download
+            aria-label={`Download ${profile.name}'s résumé`}
           >
             <span>DOWNLOAD RÉSUMÉ</span>
             <Icon name="download" size={15} />
@@ -575,9 +683,12 @@ function App() {
   const [routeKey, setRouteKey] = useState(() => getRouteKey());
   const routeUrl = new URL(routeKey, window.location.origin);
   const normalizedPath = routeUrl.pathname.replace(/\/+$/, "") || "/";
+  const projectDetailsMatch = normalizedPath.match(/^\/projects\/([^/]+)$/);
+  const projectSlug = projectDetailsMatch ? decodeURIComponent(projectDetailsMatch[1]) : "";
+  const isProjectDetailsPage = Boolean(projectSlug);
   const isStackPage = normalizedPath === "/stack";
   const isContactPage = normalizedPath === "/contact";
-  const isProjectsPage = normalizedPath === "/projects";
+  const isProjectsPage = normalizedPath === "/projects" || isProjectDetailsPage;
   const isDesignsPage = normalizedPath === "/designs";
   const isAimLabPage = normalizedPath === "/aim-lab";
   const isStackClimberPage = normalizedPath === "/stack-climber";
@@ -586,6 +697,58 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("portfolio-theme") || "dark");
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("portfolio-sound") === "on");
+const [profile, setProfile] = useState(defaultProfile);
+  const [socialLinks, setSocialLinks] = useState(defaultSocialLinks);
+const [metrics, setMetrics] = useState(defaultMetrics);
+  const [designs, setDesigns] = useState([]);
+  const [designsState, setDesignsState] = useState("loading");
+  const [projects, setProjects] = useState([]);
+  const [projectsState, setProjectsState] = useState("loading");
+const featuredProjects = projects.filter((project) => project.isFeatured);
+  const featuredDesigns = designs.filter((design) => design.isFeatured);
+  const portfolioIsLoading = projectsState === "loading" || designsState === "loading";
+
+useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadPortfolioContent() {
+      try {
+        const response = await fetch(`${cmsApiBaseUrl}/portfolio`, {
+          cache: "no-store",
+          headers: { Accept: "application/json" },
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error(`CMS returned ${response.status}`);
+
+        const content = await response.json();
+        if (!content?.profile || !Array.isArray(content.projects) || !Array.isArray(content.designs)) throw new Error("CMS portfolio response is invalid");
+        setProfile(mapCmsProfile(content.profile));
+        setSocialLinks(Array.isArray(content.socialLinks) ? content.socialLinks : defaultSocialLinks);
+        setMetrics(Array.isArray(content.metrics) ? content.metrics : defaultMetrics);
+        setDesigns(content.designs.map(mapCmsDesign));
+        setDesignsState("ready");
+        setProjects(content.projects.map(mapCmsProject));
+        setProjectsState("ready");
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        console.error("Unable to load CMS portfolio content.", error);
+        setDesigns([]);
+        setDesignsState("error");
+        setProjects([]);
+        setProjectsState("error");
+      }
+    }
+
+    loadPortfolioContent();
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (isProjectDetailsPage) return;
+    document.title = profile.seoTitle || `${profile.name} — Portfolio`;
+    const description = document.querySelector('meta[name="description"]');
+    if (description) description.setAttribute("content", profile.seoDescription || profile.bioPrimary);
+  }, [profile, isProjectDetailsPage]);
 
   const navigateTo = useCallback((href, { historyMode = "push" } = {}) => {
     const nextUrl = href instanceof URL ? href : new URL(href, window.location.href);
@@ -757,7 +920,7 @@ function App() {
       const nextUrl = new URL(anchor.href, window.location.href);
       if (nextUrl.origin !== window.location.origin) return;
       const nextPath = nextUrl.pathname.replace(/\/+$/, "") || "/";
-      if (!appPagePaths.has(nextPath)) return;
+      if (!isAppPagePath(nextPath)) return;
 
       event.preventDefault();
       navigateTo(nextUrl);
@@ -797,7 +960,9 @@ function App() {
     return (
       <div className="site-shell">
         <a className="skip-link" href="#main-content">Skip to main content</a>
+        <BackendPreloader active={portfolioIsLoading} />
         <Sidebar
+          profile={profile}
           activeSection={activePage}
           open={menuOpen}
           setOpen={setMenuOpen}
@@ -815,9 +980,11 @@ function App() {
           <div className="ambient ambient-one" />
           <div className="ambient ambient-two" />
           {isProjectsPage
-            ? <ProjectsPage Icon={Icon} ProjectVisual={ProjectVisual} projects={projects} />
+            ? isProjectDetailsPage
+              ? <ProjectDetailsPage Icon={Icon} slug={projectSlug} apiBaseUrl={cmsApiBaseUrl} resolveImage={resolveCmsProjectImage} projects={projects} />
+              : <ProjectsPage Icon={Icon} ProjectVisual={ProjectVisual} projects={projects} projectsState={projectsState} />
             : isDesignsPage
-              ? <DesignsPage Icon={Icon} designs={designHighlights} />
+              ? <DesignsPage Icon={Icon} designs={designs} designsState={designsState} />
               : isPlaygroundPage
                 ? isStackClimberPage
                   ? <StackClimberPage Icon={Icon} onGameSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
@@ -826,7 +993,7 @@ function App() {
                   : <TypingPage Icon={Icon} onTypingSound={(type) => soundEnabled && playUiTone(type)} onNavigate={navigateTo} />
               : isStackPage
               ? <TechStackPage Icon={Icon} />
-              : <ContactPage Icon={Icon} />}
+              : <ContactPage Icon={Icon} profile={profile} apiBaseUrl={cmsApiBaseUrl} />}
         </main>
       </div>
     );
@@ -835,7 +1002,9 @@ function App() {
   return (
     <div className="site-shell">
       <a className="skip-link" href="#main-content">Skip to main content</a>
+      <BackendPreloader active={portfolioIsLoading} />
       <Sidebar
+        profile={profile}
         activeSection={activeSection}
         open={menuOpen}
         setOpen={setMenuOpen}
@@ -851,37 +1020,51 @@ function App() {
         <section className="hero content-width" id="profile">
           <div className="hero-art">
             <p className="eyebrow">FULL-STACK / DESIGN / SYSTEMS</p>
-            <Portrait />
+            <Portrait profile={profile} />
           </div>
           <div className="hero-copy">
-            <p className="availability"><span /> AVAILABLE FOR FREELANCE PROJECTS · METRO MANILA</p>
-            <h1>Gervie Asilo</h1>
+            <p className="availability"><span /> {profile.availabilityText.toUpperCase()} · {profile.location.toUpperCase()}</p>
+            <h1>{profile.name}</h1>
             <div className="hero-intro">
-              <p>I’m a full-stack software developer and graphic designer building practical digital solutions with clean, modern design.</p>
-              <p>I connect interfaces, backend systems, branding, and workflows so projects are easier to launch, manage, and improve.</p>
+              <p>{profile.bioPrimary}</p>
+              <p>{profile.bioSecondary}</p>
             </div>
             <div className="social-links" aria-label="Professional profiles and contact">
-              <a href="https://github.com/gervie1234" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on GitHub">github <Icon name="arrow" size={12} /></a>
-              <a href="https://www.linkedin.com/in/gervieasilo/" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on LinkedIn">linkedin <Icon name="arrow" size={12} /></a>
-              <a href="https://www.facebook.com/gervieasilo" target="_blank" rel="me noreferrer" aria-label="Gervie Asilo on Facebook">facebook <Icon name="arrow" size={12} /></a>
-              <a href="mailto:gervieasilo@gmail.com" aria-label="Email Gervie Asilo">email <Icon name="arrow" size={12} /></a>
+              {socialLinks.map((link) => {
+                const external = /^https?:/i.test(link.url);
+                return (
+                  <a
+                    href={link.url}
+                    key={`${link.platform}-${link.url}`}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "me noreferrer" : undefined}
+                    aria-label={`${profile.name} — ${link.platform}`}
+                  >
+                    {link.label} <Icon name="arrow" size={12} />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>
 
         <section className="metrics content-width" aria-label="Career highlights">
-          <div><strong>6<sup>+</sup></strong><span>YEARS OF<br />EXPERIENCE</span></div>
-          <div><strong>5<sup>+</sup></strong><span>YEARS OF<br />IMS OWNERSHIP</span></div>
-          <div><strong>200<sup>+</sup></strong><span>E-COMMERCE<br />LISTINGS</span></div>
-          <div><strong>150K<sup>+</sup></strong><span>STORE FOLLOWERS<br />REACHED</span></div>
+          {metrics.map((metric) => (
+            <div key={`${metric.value}-${metric.label}`}>
+              <strong>{metric.value}<sup>{metric.suffix}</sup></strong>
+              <span>{metric.label.toUpperCase()}</span>
+            </div>
+          ))}
         </section>
 
         <section className="projects-section content-width section-space" id="projects">
           <SectionHeading number="01" action="view all projects" actionHref="/projects">selected projects</SectionHeading>
           <div className="project-stage">
-            {projects.map((project, index) => <ProjectCard key={project.title} project={project} index={index} />)}
+            {featuredProjects.map((project, index) => <ProjectCard key={project.slug || project.title} project={project} index={index} />)}
           </div>
-          <p className="project-hint">HOVER TO EXPLORE <span aria-hidden="true">↗</span></p>
+          <p className="project-hint">
+            {projectsState === "loading" ? "LOADING PUBLISHED PROJECTS" : projectsState === "error" ? "PROJECTS TEMPORARILY UNAVAILABLE" : featuredProjects.length === 0 ? "NO FEATURED PROJECTS" : <>HOVER TO EXPLORE <span aria-hidden="true">↗</span></>}
+          </p>
           <a className="project-mobile-link" href="/projects"><span>VIEW ALL PROJECTS</span><Icon name="arrow" size={15} /></a>
         </section>
 
@@ -889,7 +1072,7 @@ function App() {
           <SectionHeading number="02" action="view more" actionHref="/designs">graphic design</SectionHeading>
           <p className="designs-lead">Selected product campaign visuals shaped for clear offers, strong recognition, and social-first impact.</p>
           <div className="design-preview-grid">
-            {designHighlights.map((design, index) => (
+            {featuredDesigns.map((design, index) => (
               <a className="design-preview-card" href={"/designs#" + design.slug} key={design.slug}>
                 <figure>
                   <div className="design-preview-image">
@@ -973,7 +1156,7 @@ function App() {
             <Icon name="arrow" size={22} />
           </a>
           <footer>
-            <span>© 2026 GERVIE ASILO</span>
+            <span>© 2026 {profile.name.toUpperCase()}</span>
             <span>DESIGNED &amp; BUILT WITH INTENT</span>
             <a href={(isStackPage || isContactPage || isProjectsPage || isDesignsPage) ? "/" : "#profile"}>BACK TO TOP ↑</a>
           </footer>

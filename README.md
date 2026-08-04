@@ -28,3 +28,5 @@ npm run build
 ```
 
 Copy `.env.example` to `.env` and configure the contact-form endpoint when deploying the Google Apps Script integration.
+
+Set `VITE_CMS_API_URL` to the public `/api/public` URL of Gervie Portfolio CMS. Project publish and unpublish changes are read from this API; if it is unavailable, the frontend intentionally hides project cards instead of showing stale unpublished content.
