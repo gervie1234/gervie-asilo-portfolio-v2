@@ -5,9 +5,11 @@ const MIN_VISIBLE_MS = 650;
 const EXIT_DURATION_MS = 420;
 
 function BackendPreloader({ active, message = "Loading the latest work" }) {
-  const [visible, setVisible] = useState(false);
+  // Cover the very first React paint when CMS content is already loading.
+  // Later, short-lived reloads still use SHOW_DELAY_MS to avoid flashing.
+  const [visible, setVisible] = useState(() => active);
   const [leaving, setLeaving] = useState(false);
-  const shownAt = useRef(0);
+  const shownAt = useRef(active ? Date.now() : 0);
 
   useEffect(() => {
     let showTimer;
