@@ -136,7 +136,6 @@ a {
   inset: 0;
   display: grid;
   place-items: center;
-  overflow: hidden;
   background: var(--bg);
   opacity: 1;
   transition: opacity 360ms ease, visibility 360ms ease;
@@ -148,136 +147,23 @@ a {
   pointer-events: none;
 }
 
-.backend-preloader-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, color-mix(in srgb, var(--text-faint) 34%, transparent) 0.75px, transparent 0.85px);
-  background-size: 22px 22px;
-  opacity: 0.42;
-  mask-image: radial-gradient(circle at center, #000 8%, transparent 72%);
-}
-
-.backend-preloader-panel {
-  position: relative;
-  width: min(420px, calc(100vw - 48px));
+.backend-preloader-simple {
+  width: min(280px, calc(100vw - 48px));
   display: grid;
-  justify-items: center;
-  padding: 32px;
+  gap: 16px;
 }
 
-.backend-preloader-brand {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-faint);
-  font: 500 8px var(--mono);
-  letter-spacing: 0.13em;
-}
-
-.backend-preloader-brand span {
-  display: grid;
-  width: 26px;
-  height: 26px;
-  place-items: center;
-  border-radius: 7px;
-  background: var(--accent);
-  color: #101112;
-  letter-spacing: -0.06em;
-}
-
-.backend-preloader-brand p,
-.backend-preloader-copy p,
-.backend-preloader-copy span {
+.backend-preloader-simple p {
   margin: 0;
-}
-
-.backend-preloader-mark {
-  position: relative;
-  width: 112px;
-  height: 112px;
-  display: grid;
-  place-items: center;
-  margin: 58px 0 30px;
-}
-
-.backend-preloader-mark::before,
-.backend-preloader-mark::after,
-.backend-preloader-orbit {
-  content: "";
-  position: absolute;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-}
-
-.backend-preloader-mark::before {
-  inset: 0;
-}
-
-.backend-preloader-mark::after {
-  inset: 15px;
-}
-
-.backend-preloader-orbit {
-  inset: 30px;
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
-}
-
-.backend-preloader-orbit::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -32px;
-  width: 7px;
-  height: 7px;
-  margin: -3.5px 0 0 -3.5px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 65%, transparent);
-  transform-origin: 54px 3.5px;
-  animation: backend-preloader-orbit 1.15s linear infinite;
-}
-
-.backend-preloader-core {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--text);
-  color: var(--bg);
-  font: 500 15px var(--mono);
-  letter-spacing: -0.08em;
-}
-
-.backend-preloader-copy {
-  display: grid;
-  gap: 8px;
-  justify-items: center;
-  text-align: center;
-}
-
-.backend-preloader-copy p {
   color: var(--text);
-  font: 500 12px var(--mono);
-  letter-spacing: 0.02em;
-}
-
-.backend-preloader-copy span {
-  color: var(--text-faint);
-  font: 400 8px var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font: 500 13px var(--mono);
+  letter-spacing: 0.06em;
+  text-align: center;
 }
 
 .backend-preloader-progress {
   width: 100%;
   height: 1px;
-  margin-top: 28px;
   overflow: hidden;
   background: var(--line);
 }
@@ -290,40 +176,14 @@ a {
   animation: backend-preloader-progress 1.3s var(--ease) infinite;
 }
 
-.backend-preloader-index {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  color: var(--text-faint);
-  font: 400 7px var(--mono);
-  letter-spacing: 0.08em;
-}
-
-@keyframes backend-preloader-orbit {
-  to { transform: rotate(360deg); }
-}
-
 @keyframes backend-preloader-progress {
   from { transform: translateX(-115%); }
   to { transform: translateX(250%); }
 }
 
-@media (max-width: 520px) {
-  .backend-preloader-panel {
-    width: min(330px, calc(100vw - 32px));
-    padding-inline: 18px;
-  }
-
-  .backend-preloader-brand {
-    left: 18px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .backend-preloader,
-  .backend-preloader-progress span,
-  .backend-preloader-orbit::after {
+  .backend-preloader-progress span {
     animation: none;
     transition-duration: 1ms;
   }

@@ -53,29 +53,10 @@ function BackendPreloader({ active, message = "Loading the latest work" }) {
       aria-live="polite"
       aria-label={message}
     >
-      <div className="backend-preloader-grid" aria-hidden="true" />
-      <div className="backend-preloader-panel">
-        <div className="backend-preloader-brand" aria-hidden="true">
-          <span>GA</span>
-          <p>GERVIE ASILO / PORTFOLIO</p>
-        </div>
-
-        <div className="backend-preloader-mark" aria-hidden="true">
-          <span className="backend-preloader-orbit" />
-          <span className="backend-preloader-core">G</span>
-        </div>
-
-        <div className="backend-preloader-copy">
-          <p>{message}</p>
-          <span>Connecting to the portfolio CMS</span>
-        </div>
-
+      <div className="backend-preloader-simple" aria-hidden="true">
+        <p>Gervie Asilo</p>
         <div className="backend-preloader-progress" aria-hidden="true">
           <span />
-        </div>
-
-        <div className="backend-preloader-index" aria-hidden="true">
-          <span>01</span><span>02</span><span>03</span><span>04</span>
         </div>
       </div>
     </div>
