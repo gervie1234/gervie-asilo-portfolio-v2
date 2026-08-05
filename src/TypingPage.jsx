@@ -197,12 +197,12 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
     setFinished(true);
   };
 
-  const commitCurrentWord = () => {
-    if (!currentInput) return;
+  const commitCurrentWord = (inputValue = currentInput) => {
+    if (!inputValue) return;
 
     const targetWord = passageWords[currentWordIndex];
-    const missingCharacters = Math.max(targetWord.length - currentInput.length, 0);
-    const wordHasError = missingCharacters > 0 || currentInput.split("").some((character, index) => character !== targetWord[index]);
+    const missingCharacters = Math.max(targetWord.length - inputValue.length, 0);
+    const wordHasError = missingCharacters > 0 || inputValue.split("").some((character, index) => character !== targetWord[index]);
 
     if (missingCharacters) {
       setAttempts((current) => current + missingCharacters);
@@ -210,7 +210,7 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
     }
 
     onTypingSound?.(wordHasError ? "error" : "type");
-    setCompletedWords((current) => [...current, currentInput]);
+    setCompletedWords((current) => [...current, inputValue]);
     setMistakeAt(-1);
 
     if (currentWordIndex === passageWords.length - 1) {
@@ -227,7 +227,22 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
     if (finished) return;
 
     const targetWord = passageWords[currentWordIndex];
-    const nextValue = event.target.value.replace(/\s/g, "").slice(0, targetWord.length + 12);
+    const rawValue = event.target.value;
+    const includesSpace = /\s/.test(rawValue);
+    const nextValue = rawValue.replace(/\s/g, "").slice(0, targetWord.length + 12);
+
+    // Mobile soft keyboards do not consistently fire keydown for Space. Treat a
+    // whitespace character received through the controlled input as a word commit.
+    if (includesSpace && !nextValue) {
+      event.target.value = "";
+      return;
+    }
+
+    if (includesSpace && nextValue === currentInput) {
+      commitCurrentWord(nextValue);
+      return;
+    }
+
     if (nextValue.length > currentInput.length) {
       const typedIndex = currentInput.length;
       const nextCharacter = nextValue[typedIndex];
@@ -259,7 +274,17 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
         return;
       }
 
+      if (includesSpace) {
+        commitCurrentWord(nextValue);
+        return;
+      }
+
       setCurrentInput(nextValue);
+      return;
+    }
+
+    if (includesSpace) {
+      commitCurrentWord(nextValue);
       return;
     }
 
@@ -403,6 +428,8 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
                 autoCapitalize="off"
                 autoCorrect="off"
                 spellCheck="false"
+                inputMode="text"
+                enterKeyHint="done"
               />
             </div>
 
