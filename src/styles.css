@@ -4999,6 +4999,15 @@ html[data-route-transitioning] main {
   line-height: 1.7;
 }
 
+@media (min-width: 801px) {
+  .project-detail-title-row h1,
+  .project-detail-state h1 {
+    font-size: clamp(42px, 5vw, 76px);
+    line-height: .96;
+  }
+
+}
+
 @media (max-width: 800px) {
   .project-detail-title-row,
   .project-detail-body {
