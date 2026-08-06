@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
@@ -555,6 +555,65 @@ function ProjectCard({ project, index }) {
   );
 }
 
+function MobileProjectStage({ projects }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const pointerStartRef = useRef(null);
+  const swipedRef = useRef(false);
+  const projectCount = projects.length;
+
+  useEffect(() => {
+    if (projectCount > 0 && activeIndex >= projectCount) setActiveIndex(0);
+  }, [activeIndex, projectCount]);
+
+  if (projectCount === 0) return <div className="project-stage" aria-label="Selected projects" />;
+
+  const visibleCount = Math.min(3, projectCount);
+  const visibleProjects = Array.from({ length: visibleCount }, (_, slot) => ({
+    project: projects[(activeIndex + slot) % projectCount],
+    slot,
+  }));
+
+  const handlePointerDown = (event) => {
+    if (window.innerWidth > 640 || event.pointerType === "mouse") return;
+    pointerStartRef.current = event.clientX;
+    swipedRef.current = false;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
+
+  const handlePointerUp = (event) => {
+    const start = pointerStartRef.current;
+    pointerStartRef.current = null;
+    if (start === null || window.innerWidth > 640) return;
+    const distance = event.clientX - start;
+    if (Math.abs(distance) < 40 || projectCount < 2) return;
+    swipedRef.current = true;
+    setActiveIndex((current) => (current + (distance < 0 ? 1 : -1) + projectCount) % projectCount);
+  };
+
+  const handleClick = (event) => {
+    if (!swipedRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    swipedRef.current = false;
+  };
+
+  return (
+    <div
+      className="project-stage"
+      role="region"
+      aria-label="Selected projects. Swipe left or right to explore."
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => { pointerStartRef.current = null; }}
+      onClick={handleClick}
+    >
+      {visibleProjects.map(({ project, slot }) => (
+        <ProjectCard key={project.slug || project.title} project={project} index={projectCount === 1 ? 1 : slot} />
+      ))}
+      {projectCount > 1 && <span className="project-swipe-hint" aria-hidden="true">SWIPE TO EXPLORE</span>}
+    </div>
+  );
+}
 function Sidebar({ profile, activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
   const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage;
   const closeThenNavigate = () => {
@@ -1066,9 +1125,7 @@ useEffect(() => {
 
         <section className="projects-section content-width section-space" id="projects">
           <SectionHeading number="01" action="view all projects" actionHref="/projects">selected projects</SectionHeading>
-          <div className="project-stage">
-            {featuredProjects.map((project, index) => <ProjectCard key={project.slug || project.title} project={project} index={index} />)}
-          </div>
+          <MobileProjectStage projects={featuredProjects} />
           <p className="project-hint">
             {projectsState === "loading" ? "LOADING PUBLISHED PROJECTS" : projectsState === "error" ? "PROJECTS TEMPORARILY UNAVAILABLE" : featuredProjects.length === 0 ? "NO FEATURED PROJECTS" : <>HOVER TO EXPLORE <span aria-hidden="true">↗</span></>}
           </p>
