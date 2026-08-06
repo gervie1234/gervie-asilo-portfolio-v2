@@ -5000,10 +5000,21 @@ html[data-route-transitioning] main {
 }
 
 @media (min-width: 801px) {
+  .project-detail-title-row {
+    display: block;
+    max-width: 980px;
+  }
+
   .project-detail-title-row h1,
   .project-detail-state h1 {
+    max-width: 980px;
     font-size: clamp(42px, 5vw, 76px);
     line-height: .96;
+  }
+
+  .project-detail-title-row > p {
+    max-width: 700px;
+    margin: 20px 0 0;
   }
 
 }
