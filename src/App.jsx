@@ -219,7 +219,16 @@ const careerImpact = [
     detail: "Helped grow the Home de Luxe Shopee Store through branding, product presentation, and consistent digital content.",
     source: "HOME DE LUXE · BRAND GROWTH",
   },
+  {
+    metric: "LIVE",
+    unit: "CAMPAIGNS",
+    title: "Google Ads campaign management",
+    detail: "Set up, monitored, and optimized running Google Ads campaigns across multiple websites with a focus on qualified traffic and practical business results.",
+    source: "MULTI-SITE CAMPAIGNS · PAID SEARCH",
+  },
+
 ];
+
 
 const workHistory = [
   {
@@ -258,6 +267,8 @@ const coreStack = [
   "MySQL / SQL",
   "Flutter",
   "Git / GitHub",
+  "Google Ads",
+  "Campaign Optimization",
   "Azure / IIS",
 ];
 

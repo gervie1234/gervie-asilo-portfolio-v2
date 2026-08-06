@@ -41,7 +41,12 @@ const stackGroups = [
       "Llama",
       "Large Language Models (LLMs)",
       "n8n Automation",
-    ],
+    ],  },
+  {
+    number: "06",
+    title: "Growth & Marketing",
+    description: "Paid search campaign setup and ongoing optimization for live websites.",
+    tools: ["Google Ads", "Paid Search", "Campaign Management"],
   },
 ];
 
