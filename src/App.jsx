@@ -9,6 +9,7 @@ import TypingPage from "./TypingPage";
 import AimLabPage from "./AimLabPage";
 import StackClimberPage from "./StackClimberPage";
 import BackendPreloader from "./BackendPreloader";
+import { groupDesigns } from "./designCollections";
 
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
@@ -176,6 +177,8 @@ function mapCmsDesign(design) {
     alt: design.imageAlt || visualDefaults.alt || "",
     href: design.externalUrl || "",
     isFeatured: design.isFeatured,
+    collectionKey: design.collectionKey || "",
+    collectionTitle: design.collectionTitle || "",
   };
 }
 
@@ -776,7 +779,7 @@ const [metrics, setMetrics] = useState(defaultMetrics);
   const [projects, setProjects] = useState([]);
   const [projectsState, setProjectsState] = useState("loading");
 const featuredProjects = projects.filter((project) => project.isFeatured);
-  const featuredDesigns = designs.filter((design) => design.isFeatured);
+  const featuredDesignGroups = groupDesigns(designs).filter((group) => group.isFeatured);
   const portfolioIsLoading = projectsState === "loading" || designsState === "loading";
 
 useEffect(() => {
@@ -1147,19 +1150,25 @@ useEffect(() => {
           <SectionHeading number="02" action="view more" actionHref="/designs">graphic design</SectionHeading>
           <p className="designs-lead">Selected product campaign visuals shaped for clear offers, strong recognition, and social-first impact.</p>
           <div className="design-preview-grid">
-            {featuredDesigns.map((design, index) => (
-              <a className="design-preview-card" href={"/designs#" + design.slug} key={design.slug}>
+            {featuredDesignGroups.map((group, index) => {
+              const design = group.items[0];
+              return (
+              <a className="design-preview-card" href={"/designs#" + group.slug} key={group.key}>
                 <figure>
-                  <div className="design-preview-image">
-                    <img src={design.image} alt={design.alt} loading="lazy" decoding="async" />
+                  <div className={`design-preview-image${group.isCollection ? " is-collection" : ""}`}>
+                    {group.items.slice(0, 4).map((item) => (
+                      <img src={item.image} alt={item.alt} loading="lazy" decoding="async" key={item.slug} />
+                    ))}
+                    {group.isCollection && <span className="design-collection-count">{group.items.length} IMAGES</span>}
                   </div>
                   <figcaption>
-                    <span>{String(index + 1).padStart(2, "0")} / {design.category}</span>
-                    <strong>{design.title}</strong>
+                    <span>{String(index + 1).padStart(2, "0")} / {group.isCollection ? "COLLECTION" : group.category}</span>
+                    <strong>{group.title}</strong>
                   </figcaption>
                 </figure>
               </a>
-            ))}
+              );
+            })}
           </div>
           <a className="designs-mobile-link" href="/designs"><span>VIEW MORE DESIGNS</span><Icon name="arrow" size={15} /></a>
         </section>
