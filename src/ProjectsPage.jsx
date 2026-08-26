@@ -31,6 +31,7 @@ function ProjectsPage({ Icon, ProjectVisual, projects, projectsState }) {
               kind={project.kind}
               accent={project.accent}
               image={project.image}
+              thumbnail={project.thumbnail}
               imageAlt={project.imageAlt}
             />
             <div className="archive-project-copy">

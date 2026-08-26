@@ -174,6 +174,7 @@ function mapCmsDesign(design) {
     category: design.category?.toUpperCase() || "DESIGN",
     description: design.description || "",
     image: resolveCmsDesignImage(design.imageUrl || visualDefaults.image),
+    thumbnail: resolveCmsDesignImage(design.thumbnailUrl || design.imageUrl || visualDefaults.image),
     alt: design.imageAlt || visualDefaults.alt || "",
     href: design.externalUrl || "",
     isFeatured: design.isFeatured,
@@ -194,6 +195,7 @@ function mapCmsProject(project, index) {
     summary: project.summary,
     accent: project.accentColor || visualDefaults.accent || "#d6ff64",
     image: resolveCmsProjectImage(project.featuredImageUrl || visualDefaults.image),
+    thumbnail: resolveCmsProjectImage(project.featuredImageThumbnailUrl || project.featuredImageUrl || visualDefaults.image),
     imageAlt: project.featuredImageAlt || visualDefaults.imageAlt || "",
     href: `/projects/${project.slug}`,
     isFeatured: project.isFeatured,
@@ -494,6 +496,9 @@ function Portrait({ profile }) {
         src={profile.portraitUrl}
         width="1080"
         height="1100"
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
         alt={`${profile.name} working at a computer`}
       />
       <div className="portrait-wash" aria-hidden="true" />
@@ -502,11 +507,21 @@ function Portrait({ profile }) {
   );
 }
 
-function ProjectVisual({ kind, accent, image, imageAlt = "" }) {
+function ProjectVisual({ kind, accent, image, thumbnail, imageAlt = "" }) {
   if (image) {
     return (
       <div className="project-visual project-visual-screenshot" style={{ "--accent": accent }}>
-        <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+        <img
+          src={thumbnail || image}
+          alt={imageAlt}
+          loading="lazy"
+          decoding="async"
+          onError={(event) => {
+            if (image && event.currentTarget.src !== new URL(image, window.location.href).href) {
+              event.currentTarget.src = image;
+            }
+          }}
+        />
         <span className="project-visual-badge">LIVE SYSTEM</span>
       </div>
     );
@@ -557,7 +572,7 @@ function ProjectCard({ project, index }) {
         <span>{project.number}</span>
         <span>{project.label}</span>
       </div>
-      <ProjectVisual kind={project.kind} accent={project.accent} image={project.image} imageAlt={project.imageAlt} />
+      <ProjectVisual kind={project.kind} accent={project.accent} image={project.image} thumbnail={project.thumbnail} imageAlt={project.imageAlt} />
       <div className="project-copy">
         <div>
           <h3>{project.title}</h3>
@@ -1155,10 +1170,18 @@ useEffect(() => {
               return (
               <a className="design-preview-card" href={"/designs#" + group.slug} key={group.key}>
                 <figure>
-                  <div className={`design-preview-image${group.isCollection ? " is-collection" : ""}`}>
-                    {group.items.slice(0, 4).map((item) => (
-                      <img src={item.image} alt={item.alt} loading="lazy" decoding="async" key={item.slug} />
-                    ))}
+                  <div className={`design-preview-image${group.isCollection ? " is-collection is-cover-only" : ""}`}>
+                    <img
+                      src={design.thumbnail || design.image}
+                      alt={design.alt}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(event) => {
+                        if (event.currentTarget.src !== new URL(design.image, window.location.href).href) {
+                          event.currentTarget.src = design.image;
+                        }
+                      }}
+                    />
                     {group.isCollection && <span className="design-collection-count">{group.items.length} IMAGES</span>}
                   </div>
                   <figcaption>

@@ -107,16 +107,19 @@ export default function DesignsPage({ designs, designsState, Icon }) {
               onClick={() => setSelection({ groupIndex: index, itemIndex: 0 })}
               aria-label={`Preview ${group.title}${group.isCollection ? ` collection with ${group.items.length} images` : ""}`}
             >
-              <span className={`designs-page-image${group.isCollection ? " is-collection" : ""}`}>
-                {group.items.slice(0, 4).map((design, imageIndex) => (
-                  <img
-                    src={design.image}
-                    alt={design.alt}
-                    loading={index === 0 && imageIndex === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    key={design.slug}
-                  />
-                ))}
+              <span className={`designs-page-image${group.isCollection ? " is-collection is-cover-only" : ""}`}>
+                <img
+                  src={group.items[0].thumbnail || group.items[0].image}
+                  alt={group.items[0].alt}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  onError={(event) => {
+                    const original = group.items[0].image;
+                    if (event.currentTarget.src !== new URL(original, window.location.href).href) {
+                      event.currentTarget.src = original;
+                    }
+                  }}
+                />
                 {group.isCollection && <span className="design-collection-count">{group.items.length} IMAGES</span>}
                 <span className="designs-page-view-label">{group.isCollection ? "VIEW SET" : "VIEW FULL"}</span>
               </span>
@@ -215,7 +218,17 @@ export default function DesignsPage({ designs, designsState, Icon }) {
                     onClick={() => setSelection((current) => ({ ...current, itemIndex: index }))}
                     key={design.slug}
                   >
-                    <img src={design.image} alt="" loading="lazy" decoding="async" />
+                    <img
+                      src={design.thumbnail || design.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      onError={(event) => {
+                        if (event.currentTarget.src !== new URL(design.image, window.location.href).href) {
+                          event.currentTarget.src = design.image;
+                        }
+                      }}
+                    />
                     <span>{String(index + 1).padStart(2, "0")}</span>
                   </button>
                 ))}
