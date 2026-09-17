@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
+import { usePortfolioPageView } from "./PortfolioAnalytics";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
@@ -772,6 +773,7 @@ function App() {
   const [routeKey, setRouteKey] = useState(() => getRouteKey());
   const routeUrl = new URL(routeKey, window.location.origin);
   const normalizedPath = routeUrl.pathname.replace(/\/+$/, "") || "/";
+  usePortfolioPageView(normalizedPath);
   const projectDetailsMatch = normalizedPath.match(/^\/projects\/([^/]+)$/);
   const projectSlug = projectDetailsMatch ? decodeURIComponent(projectDetailsMatch[1]) : "";
   const isProjectDetailsPage = Boolean(projectSlug);
