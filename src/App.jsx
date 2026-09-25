@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { usePortfolioPageView } from "./PortfolioAnalytics";
+import { usePortfolioPageView, useViewingNow } from "./PortfolioAnalytics";
 import TechStackPage from "./StackPage";
 import ContactPage from "./ContactPage";
 import ProjectsPage from "./ProjectsPage";
@@ -645,6 +645,7 @@ function MobileProjectStage({ projects }) {
   );
 }
 function Sidebar({ profile, activeSection, open, setOpen, theme, toggleTheme, soundEnabled, toggleSound, isStackPage = false, isContactPage = false, isProjectsPage = false, isDesignsPage = false, isPlaygroundPage = false }) {
+  const viewingNow = useViewingNow();
   const isSecondaryPage = isStackPage || isContactPage || isProjectsPage || isDesignsPage || isPlaygroundPage;
   const closeThenNavigate = () => {
     setOpen(false);
@@ -714,9 +715,7 @@ function Sidebar({ profile, activeSection, open, setOpen, theme, toggleTheme, so
 
         <div className="sidebar-bottom">
           <div className="presence">
-            <div className="avatar-stack" aria-hidden="true">
-              <i>G</i><i>A</i><i>UI</i><i>+</i>
-            </div>
+            {viewingNow !== null && <div className="viewing-now" aria-label={`${viewingNow} viewing now`}><strong>{viewingNow}</strong> viewing now</div>}
             <p><span /> {profile.availabilityText}</p>
           </div>
           <div className="sidebar-actions">

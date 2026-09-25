@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const endpoint = `${String(import.meta.env.VITE_CMS_API_URL || "").trim().replace(/\/$/, "")}/traffic`;
 let session;
@@ -16,7 +16,7 @@ function send(kind, path = window.location.pathname) {
     let referrer = "";
     try { const source = new URL(document.referrer); if (source.origin !== location.origin) referrer = source.hostname; } catch { /* Direct visit. */ }
     const device = /iPad|Tablet/i.test(navigator.userAgent) ? "Tablet" : /Mobi|Android/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
-    void fetch(endpoint, { method: "POST", credentials: "omit", keepalive: true,
+    return fetch(endpoint, { method: "POST", credentials: "omit", keepalive: true,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: crypto.randomUUID(), sessionId: session.id, path, kind, referrer, device })
     }).catch(() => {});
@@ -29,6 +29,31 @@ export function usePortfolioPageView(path) {
     lastPage = path;
     send("pageview", path);
   }, [path]);
+}
+
+export function useViewingNow() {
+  const [count, setCount] = useState(null);
+  useEffect(() => {
+    if (!import.meta.env.PROD || endpoint === "/traffic") return;
+    let cancelled = false;
+    const refresh = async () => {
+      if (document.visibilityState !== "visible") return;
+      await send("presence");
+      try {
+        const response = await fetch(`${endpoint}/viewing-now`, { cache: "no-store" });
+        if (!response.ok) throw new Error("Viewer count unavailable");
+        const data = await response.json();
+        if (!cancelled) setCount(Number.isInteger(data.count) && data.count >= 0 ? data.count : null);
+      } catch {
+        if (!cancelled) setCount(null);
+      }
+    };
+    void refresh();
+    const timer = window.setInterval(refresh, 60_000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => { cancelled = true; window.clearInterval(timer); document.removeEventListener("visibilitychange", refresh); };
+  }, []);
+  return count;
 }
 
 export default function PortfolioAnalytics() {
