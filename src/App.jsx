@@ -15,10 +15,10 @@ import { groupDesigns } from "./designCollections";
 const navItems = [
   { id: "profile", label: "Profile", icon: "user" },
   { id: "projects", label: "Projects", icon: "layers" },
-  { id: "designs", label: "Graphic Design", icon: "image" },
   { id: "experience", label: "Experience", icon: "briefcase" },
-  { id: "impact", label: "Impact", icon: "file" },
+  { id: "impact", label: "Engineering", icon: "file" },
   { id: "stack", label: "Tech Stack", icon: "code" },
+  { id: "designs", label: "Design Work", icon: "image" },
   { id: "playground", label: "Playground", icon: "play" },
   { id: "contact", label: "Contact", icon: "mail" },
 ];
@@ -109,17 +109,17 @@ const cmsApiBaseUrl = String(import.meta.env.VITE_CMS_API_URL || "").trim().repl
 
 const defaultProfile = {
   name: "Gervie Asilo",
-  headline: "Full-stack developer and graphic designer",
+  headline: "Full-stack Developer | ASP.NET Core & React",
   location: "Metro Manila, Philippines",
-  availabilityText: "Available for freelance projects",
-  bioPrimary: "I’m a full-stack software developer and graphic designer building practical digital solutions with clean, modern design.",
-  bioSecondary: "I connect interfaces, backend systems, branding, and workflows so projects are easier to launch, manage, and improve.",
+  availabilityText: "Open to developer opportunities",
+  bioPrimary: "I build business applications with ASP.NET Core, C#, and React.",
+  bioSecondary: "My experience includes developing and maintaining an inventory management system used in daily operations for over five years.",
   email: "gervieasilo@gmail.com",
   phone: "0918-400-1878",
   portraitUrl: "/gervie-asilo.jpg",
   resumeUrl: "/Gervie-Asilo-Resume-2026.pdf",
-  seoTitle: "Gervie Asilo — Full-stack Developer and Graphic Designer",
-  seoDescription: "Portfolio of Gervie Asilo: full-stack development, business systems, graphic design, automation, and practical digital products.",
+  seoTitle: "Gervie Asilo | Full-stack .NET Developer",
+  seoDescription: "Full-stack developer building business applications with ASP.NET Core, C#, React, and SQL. Explore production systems, technical case studies, and my resume.",
 };
 
 const defaultSocialLinks = [
@@ -129,12 +129,7 @@ const defaultSocialLinks = [
   { platform: "Email", label: "email", url: "mailto:gervieasilo@gmail.com" },
 ];
 
-const defaultMetrics = [
-  { value: "6", suffix: "+", label: "Years of experience" },
-  { value: "5", suffix: "+", label: "Years of IMS ownership" },
-  { value: "200", suffix: "+", label: "E-commerce listings" },
-  { value: "150K", suffix: "+", label: "Store followers reached" },
-];
+
 
 function telephoneHref(phone = "") {
   const digits = phone.replace(/\D/g, "");
@@ -204,35 +199,8 @@ function mapCmsProject(project, index) {
 }
 
 const careerImpact = [
-  {
-    metric: "5+",
-    unit: "YEARS",
-    title: "Business information system ownership",
-    detail: "Developed and maintained Megalight’s full-scale Information Management System supporting company-wide business operations.",
-    source: "MEGALIGHT · BUSINESS SYSTEM",
-  },
-  {
-    metric: "200+",
-    unit: "LISTINGS",
-    title: "E-commerce execution",
-    detail: "Designed and optimized product listings and promotional graphics across Shopee and Lazada.",
-    source: "GLOBALINENS · E-COMMERCE",
-  },
-  {
-    metric: "2K→150K+",
-    unit: "FOLLOWERS",
-    title: "Audience growth",
-    detail: "Helped grow the Home de Luxe Shopee Store through branding, product presentation, and consistent digital content.",
-    source: "HOME DE LUXE · BRAND GROWTH",
-  },
-  {
-    metric: "LIVE",
-    unit: "CAMPAIGNS",
-    title: "Google Ads campaign management",
-    detail: "Set up, monitored, and optimized running Google Ads campaigns across multiple websites with a focus on qualified traffic and practical business results.",
-    source: "MULTI-SITE CAMPAIGNS · PAID SEARCH",
-  },
-
+  { metric: "5+", unit: "YEARS IN USE", title: "Inventory and business operations", detail: "Inventory, delivery receipts, and reporting in a system I developed and maintained for Megalight.", source: "MEGALIGHT / IMS", href: "/projects/megalight-ims" },
+  { metric: "API", unit: "APPLICATION LAYER", title: "Content management and public APIs", detail: "An ASP.NET Core CMS serving project content, contact inquiries, and anonymous traffic analytics to this React portfolio.", source: "PORTFOLIO CMS", href: "/projects/portfolio-cms" }
 ];
 
 
@@ -241,22 +209,22 @@ const workHistory = [
     initials: "ML",
     company: "Megalight",
     role: "Programmer / Graphic Designer",
-    period: "March 2021 — March 2026",
+    period: "March 2021 - March 2026",
     highlights: [
-      "Developed and maintained a full-scale Information Management System (IMS) supporting company-wide business operations for 5+ years.",
-      "Created high-impact marketing materials and social media campaigns that improved online engagement and strengthened brand visibility.",
-      "Automated manual business processes, reducing operational workload and improving efficiency.",
-      "Delivered reliable, maintainable software solutions that continued to support the company’s growth over multiple years.",
+      "Developed and maintained an inventory management system covering inventory, delivery receipts, and reporting, used in daily operations for over five years.",
+      "Implemented business workflows with ASP.NET Core, Entity Framework Core, and MySQL.",
+      "Maintained receipt editing and archive workflows, including validation of line items and permission-controlled access.",
+      "Also created product graphics and marketing materials for the business.",
     ],
-    tags: ["Information Management", "Business Systems", "Automation"],
+    tags: ["ASP.NET Core", "EF Core", "MySQL"],
   },
   {
     initials: "GL",
     company: "Globalinens",
     role: "Systems / E-commerce / Graphic Design",
-    period: "January 2020 — February 2021",
+    period: "January 2020 - February 2021",
     highlights: [
-      "Built and deployed a custom internal business system that streamlined operations and remained in use for 3 years.",
+      "Built and deployed an internal business system that remained in use for three years.",
       "Designed and optimized 200+ e-commerce product listings and promotional graphics for Shopee and Lazada.",
       "Helped grow the Home de Luxe Shopee Store from ~2K to 150K+ followers through branding, product presentation, and digital content.",
       "Developed the company website and created consistent branding assets across multiple digital platforms.",
@@ -265,18 +233,7 @@ const workHistory = [
   },
 ];
 
-const coreStack = [
-  "React",
-  "TypeScript",
-  "C# / .NET",
-  "ASP.NET Core",
-  "MySQL / SQL",
-  "Flutter",
-  "Git / GitHub",
-  "Google Ads",
-  "Campaign Optimization",
-  "Azure / IIS",
-];
+const coreStack = ["C# / .NET", "ASP.NET Core", "Entity Framework Core", "MySQL / SQL", "React", "TypeScript", "Git / GitHub", "IIS"];
 
 let sharedAudioContext;
 let sharedNoiseBuffer;
@@ -475,7 +432,7 @@ function Icon({ name, size = 17 }) {
 function SectionHeading({ number, children, action, actionHref = "#contact" }) {
   return (
     <div className="section-heading">
-      <p><span>{number}</span> — {children}</p>
+      <p><span>{number}</span> - {children}</p>
       {action && <a href={actionHref}>{action} <span aria-hidden="true">→</span></a>}
     </div>
   );
@@ -741,7 +698,7 @@ function Sidebar({ profile, activeSection, open, setOpen, theme, toggleTheme, so
               <Icon name="mail" />
             </a>
           </div>
-          <p className="contact-label">WEB APPS, BUSINESS SYSTEMS<br />DESIGN &amp; TECHNICAL SUPPORT</p>
+          <p className="contact-label">ASP.NET CORE, REACT, SQL<br />BUSINESS APPLICATIONS</p>
           <a className="sidebar-phone" href={telephoneHref(profile.phone)} aria-label={`Call ${profile.name} at ${profile.phone}`}>
             <Icon name="phone" size={14} />
             <span>{profile.phone}</span>
@@ -789,7 +746,7 @@ function App() {
   const [soundEnabled, setSoundEnabled] = useState(() => localStorage.getItem("portfolio-sound") === "on");
 const [profile, setProfile] = useState(defaultProfile);
   const [socialLinks, setSocialLinks] = useState(defaultSocialLinks);
-const [metrics, setMetrics] = useState(defaultMetrics);
+
   const [designs, setDesigns] = useState([]);
   const [designsState, setDesignsState] = useState("loading");
   const [projects, setProjects] = useState([]);
@@ -820,7 +777,7 @@ useEffect(() => {
         if (!content?.profile || !Array.isArray(content.projects) || !Array.isArray(content.designs)) throw new Error("CMS portfolio response is invalid");
         setProfile(mapCmsProfile(content.profile));
         setSocialLinks(Array.isArray(content.socialLinks) ? content.socialLinks : defaultSocialLinks);
-        setMetrics(Array.isArray(content.metrics) ? content.metrics : defaultMetrics);
+
         setDesigns(content.designs.map(mapCmsDesign));
         setDesignsState("ready");
         setProjects(content.projects.map(mapCmsProject));
@@ -841,7 +798,7 @@ useEffect(() => {
 
   useEffect(() => {
     if (isProjectDetailsPage) return;
-    document.title = profile.seoTitle || `${profile.name} — Portfolio`;
+    document.title = profile.seoTitle || `${profile.name} - Portfolio`;
     const description = document.querySelector('meta[name="description"]');
     if (description) description.setAttribute("content", profile.seoDescription || profile.bioPrimary);
   }, [profile, isProjectDetailsPage]);
@@ -1115,18 +1072,23 @@ useEffect(() => {
         <div className="ambient ambient-two" />
         <section className="hero content-width" id="profile">
           <div className="hero-art">
-            <p className="eyebrow">FULL-STACK / DESIGN / SYSTEMS</p>
+            <p className="eyebrow">BUSINESS APPLICATIONS / WEB DEVELOPMENT</p>
             <Portrait profile={profile} />
           </div>
           <div className="hero-copy">
             <p className="availability"><span /> {profile.availabilityText.toUpperCase()} · {profile.location.toUpperCase()}</p>
-            <h1>{profile.name}</h1>
+            <p className="hero-name">{profile.name}</p>
+            <h1>Full-stack<br /><span className="hero-role-accent">.NET Developer.</span></h1>
             <div className="hero-intro">
               <p>{profile.bioPrimary}</p>
               <p>{profile.bioSecondary}</p>
             </div>
+            <div className="hero-actions">
+              <a className="primary-action" href="#projects">View development projects <Icon name="arrow" size={15} /></a>
+              <a className="secondary-action" href={profile.resumeUrl} target="_blank" rel="noreferrer">Download résumé <Icon name="arrow" size={15} /></a>
+            </div>
             <div className="social-links" aria-label="Professional profiles and contact">
-              {socialLinks.map((link) => {
+              {socialLinks.filter((link) => link.platform !== "Facebook").map((link) => {
                 const external = /^https?:/i.test(link.url);
                 return (
                   <a
@@ -1134,7 +1096,7 @@ useEffect(() => {
                     key={`${link.platform}-${link.url}`}
                     target={external ? "_blank" : undefined}
                     rel={external ? "me noreferrer" : undefined}
-                    aria-label={`${profile.name} — ${link.platform}`}
+                    aria-label={`${profile.name} - ${link.platform}`}
                   >
                     {link.label} <Icon name="arrow" size={12} />
                   </a>
@@ -1145,7 +1107,7 @@ useEffect(() => {
         </section>
 
         <section className="metrics content-width" aria-label="Career highlights">
-          {metrics.map((metric) => (
+          {[{value:"5+",label:"Years of daily IMS use"},{value:".NET",label:"Backend & business logic"},{value:"React",label:"Web interfaces"},{value:"SQL",label:"Application data"}].map((metric) => (
             <div key={`${metric.value}-${metric.label}`}>
               <strong>{metric.value}<sup>{metric.suffix}</sup></strong>
               <span>{metric.label.toUpperCase()}</span>
@@ -1155,16 +1117,89 @@ useEffect(() => {
 
         <section className="projects-section content-width section-space" id="projects">
           <SectionHeading number="01" action="view all projects" actionHref="/projects">selected projects</SectionHeading>
-          <MobileProjectStage projects={featuredProjects} />
+          <div className="developer-project-grid">
+            {featuredProjects.slice(0, 4).map((project) => (
+              <a className="developer-project-card" href={project.href} key={project.slug}>
+                <div className="developer-project-image">
+                  {project.image && <img src={project.thumbnail || project.image} alt={project.imageAlt || project.title} loading="lazy" />}
+                </div>
+                <div className="developer-project-copy">
+                  <p className="eyebrow">{project.label}</p>
+                  <h3>{project.title}</h3>
+                  <p>{project.summary}</p>
+                  <span className="project-read-link">Read case study <Icon name="arrow" size={15} /></span>
+                </div>
+              </a>
+            ))}
+          </div>
           <p className="project-hint">
-            {projectsState === "loading" ? "LOADING PUBLISHED PROJECTS" : projectsState === "error" ? "PROJECTS TEMPORARILY UNAVAILABLE" : featuredProjects.length === 0 ? "NO FEATURED PROJECTS" : <>HOVER TO EXPLORE <span aria-hidden="true">↗</span></>}
+            {projectsState === "loading" ? "LOADING PUBLISHED PROJECTS" : projectsState === "error" ? "PROJECTS TEMPORARILY UNAVAILABLE" : featuredProjects.length === 0 ? "NO FEATURED PROJECTS" : "SELECT A PROJECT TO EXPLORE THE IMPLEMENTATION"}
           </p>
           <a className="project-mobile-link" href="/projects"><span>VIEW ALL PROJECTS</span><Icon name="arrow" size={15} /></a>
         </section>
 
+        <section className="work-history-section content-width section-space" id="experience">
+          <SectionHeading number="02">experience</SectionHeading>
+          <p className="work-history-lead">Experience developing and maintaining business applications, with additional work in web development and graphic design.</p>
+          <div className="work-timeline">
+            {workHistory.map((job) => (
+              <article className="work-entry" key={job.company}>
+                <div className="work-marker" aria-hidden="true">{job.initials}</div>
+                <div className="work-entry-body">
+                  <header className="work-entry-header">
+                    <div>
+                      <h3>{job.company}</h3>
+                      <p>{job.role}</p>
+                    </div>
+                    <time>{job.period}</time>
+                  </header>
+                  <ul>
+                    {job.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                  </ul>
+                  <div className="work-tags" aria-label={job.company + " skills"}>
+                    {job.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="impact-section content-width section-space" id="impact">
+          <SectionHeading number="03">engineering in practice</SectionHeading>
+          <div className="impact-intro">
+            <p>Explore the systems, implementation decisions, and workflows behind my work.</p>
+          </div>
+          <div className="impact-grid">
+            {careerImpact.map((item) => (
+              <article className="impact-card" key={item.title}>
+                <div className="impact-metric">
+                  <strong>{item.metric}</strong>
+                  <span>{item.unit}</span>
+                </div>
+                <div className="impact-copy">
+                  <h3>{item.title}</h3>
+                  <p>{item.detail}</p>
+                </div>
+                <footer><a href={item.href}>{item.source} <Icon name="arrow" size={13} /></a></footer>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="stack-section content-width section-space" id="stack-preview">
+          <SectionHeading number="04" action="view capabilities" actionHref="/stack">core stack</SectionHeading>
+          <div className="stack-layout">
+            <p>My core tools for building and maintaining applications, from the database and API to the interface and deployment.</p>
+            <div className="skill-cloud" role="list" aria-label="Core technologies">
+              {coreStack.map((tool) => <span role="listitem" key={tool}>{tool}</span>)}
+            </div>
+          </div>
+        </section>
+
         <section className="designs-section content-width section-space" id="designs">
-          <SectionHeading number="02" action="view more" actionHref="/designs">graphic design</SectionHeading>
-          <p className="designs-lead">Selected product campaign visuals shaped for clear offers, strong recognition, and social-first impact.</p>
+          <SectionHeading number="05" action="view more" actionHref="/designs">graphic design</SectionHeading>
+          <p className="designs-lead">A selection of my graphic design work, alongside my software development practice.</p>
           <div className="design-preview-grid">
             {featuredDesignGroups.map((group, index) => {
               const design = group.items[0];
@@ -1197,70 +1232,11 @@ useEffect(() => {
           <a className="designs-mobile-link" href="/designs"><span>VIEW MORE DESIGNS</span><Icon name="arrow" size={15} /></a>
         </section>
 
-        <section className="work-history-section content-width section-space" id="experience">
-          <SectionHeading number="03">experience</SectionHeading>
-          <p className="work-history-lead">Experience shaped by building business systems, digital storefronts, brand assets, and reliable day-to-day workflows.</p>
-          <div className="work-timeline">
-            {workHistory.map((job) => (
-              <article className="work-entry" key={job.company}>
-                <div className="work-marker" aria-hidden="true">{job.initials}</div>
-                <div className="work-entry-body">
-                  <header className="work-entry-header">
-                    <div>
-                      <h3>{job.company}</h3>
-                      <p>{job.role}</p>
-                    </div>
-                    <time>{job.period}</time>
-                  </header>
-                  <ul>
-                    {job.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
-                  </ul>
-                  <div className="work-tags" aria-label={job.company + " skills"}>
-                    {job.tags.map((tag) => <span key={tag}>{tag}</span>)}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="impact-section content-width section-space" id="impact">
-          <SectionHeading number="04">proven impact</SectionHeading>
-          <div className="impact-intro">
-            <p>Concrete results from real work—built for hiring managers who want evidence, not generic claims.</p>
-          </div>
-          <div className="impact-grid">
-            {careerImpact.map((item) => (
-              <article className="impact-card" key={item.title}>
-                <div className="impact-metric">
-                  <strong>{item.metric}</strong>
-                  <span>{item.unit}</span>
-                </div>
-                <div className="impact-copy">
-                  <h3>{item.title}</h3>
-                  <p>{item.detail}</p>
-                </div>
-                <footer>{item.source}</footer>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="stack-section content-width section-space" id="stack-preview">
-          <SectionHeading number="05" action="view all stacks" actionHref="/stack">core stack</SectionHeading>
-          <div className="stack-layout">
-            <p>My primary build path from interface to deployment—the tools I reach for most often when shipping practical products.</p>
-            <div className="skill-cloud" role="list" aria-label="Core technologies">
-              {coreStack.map((tool) => <span role="listitem" key={tool}>{tool}</span>)}
-            </div>
-          </div>
-        </section>
-
         <section className="contact-section content-width" id="contact">
-          <p className="eyebrow">HAVE A PROJECT IN MIND?</p>
-          <h2>Let’s build<br />something useful.</h2>
-          <a className="contact-button" href="/contact">
-            <span>START A CONVERSATION</span>
+          <p className="eyebrow">LOOKING FOR A FULL-STACK DEVELOPER?</p>
+          <h2>Let’s talk about<br />your team.</h2>
+          <a className="contact-button" href="/contact?type=hiring">
+            <span>DISCUSS AN OPPORTUNITY</span>
             <Icon name="arrow" size={22} />
           </a>
           <footer>

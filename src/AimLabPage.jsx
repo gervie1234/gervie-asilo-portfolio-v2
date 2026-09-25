@@ -135,8 +135,8 @@ function AimLabPage({ Icon, onAimSound, onNavigate }) {
           <div className="aim-stats" aria-live="polite">
             <div><strong>{hits}<small>/{TARGET_TOTAL}</small></strong><span>HITS</span></div>
             <div><strong>{accuracy}<sup>%</sup></strong><span>ACCURACY</span></div>
-            <div><strong>{liveAverage || "—"}<small>{liveAverage ? "ms" : ""}</small></strong><span>AVERAGE</span></div>
-            <div><strong>{best || "—"}<small>{best ? "ms" : ""}</small></strong><span>BEST</span></div>
+            <div><strong>{liveAverage || "-"}<small>{liveAverage ? "ms" : ""}</small></strong><span>AVERAGE</span></div>
+            <div><strong>{best || "-"}<small>{best ? "ms" : ""}</small></strong><span>BEST</span></div>
           </div>
         </div>
 

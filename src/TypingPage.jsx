@@ -444,7 +444,7 @@ function TypingPage({ Icon, onTypingSound, onNavigate }) {
 
             <p className={`typing-hint ${mistakeAt >= 0 ? "is-error" : ""}`} aria-live="polite">
               {mistakeAt >= 0
-                ? "Wrong letters stay red — press Space for the next word."
+                ? "Wrong letters stay red - press Space for the next word."
                 : started
                   ? "Space: next word · Backspace on empty: previous word."
                   : "Click the line and start typing."}

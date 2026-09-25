@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 
 const projectTypes = [
+  "Hiring / Job opportunity",
   "Website or landing page",
   "Business system or dashboard",
   "Mobile or desktop app",
@@ -30,7 +31,10 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
   const normalizedApiBaseUrl = String(apiBaseUrl || "").trim().replace(/\/$/, "");
   const defaultEndpoint = normalizedApiBaseUrl ? `${normalizedApiBaseUrl}/contact-inquiries` : "";
   const endpoint = (import.meta.env.VITE_CONTACT_FORM_ENDPOINT || defaultEndpoint).trim();
-  const phoneHref = `tel:${profile.phone.replace(/[^+\d]/g, "")}`;
+  const phoneDigits = profile.phone.replace(/[^+\d]/g, "");
+  const phoneHref = `tel:${phoneDigits.startsWith("0") ? "+63" + phoneDigits.slice(1) : phoneDigits}`;
+  const [inquiryType, setInquiryType] = useState(() => new URLSearchParams(window.location.search).get("type") === "hiring" ? "Hiring / Job opportunity" : "");
+  const isHiring = inquiryType === "Hiring / Job opportunity";
   const [status, setStatus] = useState({ kind: "idle", message: "" });
   const submittingRef = useRef(false);
 
@@ -42,8 +46,9 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
     const formData = new FormData(form);
 
     if (formData.get("website")) {
-      setStatus({ kind: "success", message: "Thanks — your message has been received." });
+      setStatus({ kind: "success", message: "Thanks - your message has been received." });
       form.reset();
+      setInquiryType("");
       return;
     }
 
@@ -67,7 +72,7 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
     };
 
     submittingRef.current = true;
-    setStatus({ kind: "submitting", message: "Sending your project details…" });
+    setStatus({ kind: "submitting", message: "Sending your message…" });
 
     try {
       const response = await fetch(endpoint, {
@@ -88,6 +93,7 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
       }
 
       form.reset();
+      setInquiryType("");
       setStatus({
         kind: "success",
         message: responsePayload?.message || "Message sent. I’ll reply through email as soon as I can.",
@@ -111,23 +117,23 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
       <header className="contact-page-header">
         <a className="contact-page-back" href="/#profile"><span aria-hidden="true">←</span> Back home</a>
         <div>
-          <p className="eyebrow">06 / START A PROJECT</p>
-          <h1 id="contact-page-title">Start a project<span>.</span></h1>
-          <p className="contact-page-lead">Share the goal, timeline, and constraints. I’ll reply with the clearest next step.</p>
+          <p className="eyebrow">CONTACT / OPPORTUNITIES & PROJECTS</p>
+          <h1 id="contact-page-title">Let’s talk<span>.</span></h1>
+          <p className="contact-page-lead">Hiring a Full-stack / .NET Developer? Share the role and your team. Project inquiries are welcome too.</p>
         </div>
       </header>
 
       <div className="contact-page-layout">
         <aside className="contact-process" aria-label="What happens next">
-          <p className="contact-kicker">WHAT HAPPENS NEXT</p>
+          <p className="contact-kicker">GET IN TOUCH</p>
           <ol>
-            <li><span>01</span><div><strong>Inquiry saved</strong><p>Your details are recorded in my private project tracker.</p></div></li>
-            <li><span>02</span><div><strong>Email notification</strong><p>I receive the full brief at {profile.email}.</p></div></li>
+            <li><span>01</span><div><strong>Tell me about the opportunity</strong><p>Include the role, company, and work arrangement, or the project you have in mind.</p></div></li>
+            <li><span>02</span><div><strong>Share useful context</strong><p>A job description or a short project outline helps me give you a relevant reply.</p></div></li>
             <li><span>03</span><div><strong>Personal reply</strong><p>I’ll respond by email with the clearest next step.</p></div></li>
           </ol>
           <div className="contact-direct">
-            <span>Prefer email or a quick call?</span>
-            <a href={`mailto:${profile.email}`}>{profile.email} <Icon name="arrow" size={13} /></a>
+            <span>Prefer to email directly?</span>
+            <a href={`mailto:${profile.email}?subject=Full-stack%20Developer%20opportunity`}>{profile.email} <Icon name="arrow" size={13} /></a>
             <a href={phoneHref}><Icon name="phone" size={13} /> {profile.phone}</a>
           </div>
         </aside>
@@ -147,23 +153,23 @@ function ContactPage({ Icon, profile, apiBaseUrl }) {
               <input id="contact-company" name="company" type="text" autoComplete="organization" maxLength="120" placeholder="Company or team" />
             </div>
             <div className="form-field">
-              <label htmlFor="contact-type">Project type <span aria-hidden="true">*</span></label>
-              <select id="contact-type" name="projectType" required defaultValue="">
-                <option value="" disabled>Select a project type</option>
+              <label htmlFor="contact-type">Inquiry type <span aria-hidden="true">*</span></label>
+              <select id="contact-type" name="projectType" required value={inquiryType} onChange={(event) => setInquiryType(event.target.value)}>
+                <option value="" disabled>Select an inquiry type</option>
                 {projectTypes.map((type) => <option key={type} value={type}>{type}</option>)}
               </select>
             </div>
-            <div className="form-field form-field-wide">
+            {!isHiring && <div className="form-field form-field-wide">
               <label htmlFor="contact-budget">Budget range <small>optional</small></label>
               <select id="contact-budget" name="budget" defaultValue="">
                 <option value="">Prefer not to say yet</option>
                 {budgetRanges.map((budget) => <option key={budget} value={budget}>{budget}</option>)}
               </select>
-            </div>
+            </div>}
             <div className="form-field form-field-wide">
-              <label htmlFor="contact-message">Project brief <span aria-hidden="true">*</span></label>
-              <textarea id="contact-message" name="message" required minLength="20" maxLength="2000" rows="7" placeholder="What are you trying to build, improve, or fix?" aria-describedby="message-help" />
-              <small id="message-help">Include the goal, timeline, and any important constraints.</small>
+              <label htmlFor="contact-message">{isHiring ? "Role details" : "Message"} <span aria-hidden="true">*</span></label>
+              <textarea id="contact-message" name="message" required minLength="20" maxLength="2000" rows="7" placeholder={isHiring ? "Role title, job description or link, location / remote arrangement, and next steps." : "What are you trying to build, improve, or fix?"} aria-describedby="message-help" />
+              <small id="message-help">{isHiring ? "Include the role, company, work arrangement, and a job description if available." : "Include the goal, timeline, and any important constraints."}</small>
             </div>
           </div>
 

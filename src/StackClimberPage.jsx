@@ -355,8 +355,8 @@ function StackClimberPage({ Icon, onGameSound, onNavigate }) {
 
           <div className="climber-stats" aria-live="polite">
             <div><strong>{floor}</strong><span>FLOOR</span></div>
-            <div><strong>{combo > 1 ? `×${combo}` : "—"}</strong><span>COMBO</span></div>
-            <div><strong>{best || "—"}</strong><span>BEST</span></div>
+            <div><strong>{combo > 1 ? `×${combo}` : "-"}</strong><span>COMBO</span></div>
+            <div><strong>{best || "-"}</strong><span>BEST</span></div>
           </div>
         </div>
 

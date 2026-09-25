@@ -105,7 +105,7 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
     const previousTitle = document.title;
     const description = document.querySelector('meta[name="description"]');
     const previousDescription = description?.getAttribute("content") || "";
-    document.title = `${project.title} ? Gervie Asilo`;
+    document.title = `${project.title} | Gervie Asilo`;
     description?.setAttribute("content", project.summary || project.description || "");
     return () => {
       document.title = previousTitle;
@@ -119,7 +119,7 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
         <BackendPreloader active={status === "loading"} message="Opening the project story" />
         <section className="project-detail-state content-width">
           <p className="eyebrow">PROJECT / {status === "loading" ? "LOADING" : "UNAVAILABLE"}</p>
-          <h1>{status === "not-found" ? "Project not found." : status === "error" ? "Couldn?t load this project." : "Loading project?"}</h1>
+          <h1>{status === "not-found" ? "Project not found." : status === "error" ? "Could not load this project." : "Loading project..."}</h1>
           <p>{status === "loading" ? "Fetching the latest published case study." : "The project may be unpublished or the CMS is temporarily offline."}</p>
           {status !== "loading" && <a href="/projects">Back to projects <Icon name="arrow" size={15} /></a>}
         </section>
@@ -136,7 +136,7 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
   return (
     <article className="project-detail-page content-width">
       <header className="project-detail-header">
-        <a className="projects-page-back" href="/projects"><span aria-hidden="true">?</span> All projects</a>
+        <a className="projects-page-back" href="/projects"><span aria-hidden="true">←</span> All projects</a>
         <div className="project-detail-title-row">
           <div>
             <p className="eyebrow">{project.number} / {project.category || "PROJECT"}</p>
@@ -154,11 +154,11 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
 
       <div className="project-detail-body">
         <section className="project-detail-story">
-          <p className="eyebrow">01 / OVERVIEW</p>
+          <p className="eyebrow">01 / CASE STUDY</p>
           <MarkdownContent value={project.description || project.summary} />
         </section>
         <aside className="project-detail-meta">
-          <div><span>ROLE / CATEGORY</span><strong>{project.category || "Digital product"}</strong></div>
+          <div><span>PROJECT TYPE</span><strong>{project.category || "Digital product"}</strong></div>
           {technologies.length > 0 && <div><span>TECH STACK</span><ul>{technologies.map((item) => <li key={item}>{item}</li>)}</ul></div>}
         </aside>
       </div>
@@ -176,6 +176,14 @@ function ProjectDetailsPage({ Icon, slug, apiBaseUrl, resolveImage, projects }) 
           <div>{gallery.map((image, index) => <figure key={`${image.imageUrl}-${index}`}><img src={resolveImage(image.imageUrl)} alt={image.altText || `${project.title} screenshot ${index + 1}`} loading="lazy" />{image.caption && <figcaption>{image.caption}</figcaption>}</figure>)}</div>
         </section>
       )}
+
+      <div className="projects-page-contact">
+        <div>
+          <p className="eyebrow">HIRING A FULL-STACK DEVELOPER?</p>
+          <p>Let’s talk about your team and the applications you are building.</p>
+        </div>
+        <a href="/contact?type=hiring">Discuss an opportunity <Icon name="arrow" size={15} /></a>
+      </div>
 
       {related.length > 0 && (
         <section className="project-detail-related">

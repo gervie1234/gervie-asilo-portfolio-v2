@@ -11,7 +11,7 @@ function ProjectsPage({ Icon, ProjectVisual, projects, projectsState }) {
       </header>
 
       <div className="projects-archive-meta" aria-label="Project archive summary">
-        <span><strong>{String(projects.length).padStart(2, "0")}</strong> featured projects</span>
+        <span><strong>{String(projects.length).padStart(2, "0")}</strong> published projects</span>
         <span>Websites · systems · digital products</span>
       </div>
 
@@ -53,10 +53,10 @@ function ProjectsPage({ Icon, ProjectVisual, projects, projectsState }) {
 
       <div className="projects-page-contact">
         <div>
-          <p className="eyebrow">HAVE A PROJECT IN MIND?</p>
-          <p>Let’s turn the next useful idea into something people can actually use.</p>
+          <p className="eyebrow">HIRING A FULL-STACK DEVELOPER?</p>
+          <p>Share the role, your team, and the applications you are building.</p>
         </div>
-        <a href="/contact">Start a project <Icon name="arrow" size={15} /></a>
+        <a href="/contact?type=hiring">Discuss an opportunity <Icon name="arrow" size={15} /></a>
       </div>
     </section>
   );
