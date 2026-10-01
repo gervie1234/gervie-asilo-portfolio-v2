@@ -233,7 +233,7 @@ const workHistory = [
   },
 ];
 
-const coreStack = ["C# / .NET", "ASP.NET Core", "Entity Framework Core", "MySQL / SQL", "React", "TypeScript", "Git / GitHub", "IIS"];
+const coreStack = ["C# / .NET", "ASP.NET Core", "Entity Framework Core", "MySQL / SQL", "React", "TypeScript", "WordPress", "Git / GitHub", "IIS"];
 
 let sharedAudioContext;
 let sharedNoiseBuffer;
@@ -1082,6 +1082,7 @@ useEffect(() => {
             <div className="hero-intro">
               <p>{profile.bioPrimary}</p>
               <p>{profile.bioSecondary}</p>
+              <p>I also build, update, and fix WordPress websites.</p>
             </div>
             <div className="hero-actions">
               <a className="primary-action" href="#projects">View development projects <Icon name="arrow" size={15} /></a>

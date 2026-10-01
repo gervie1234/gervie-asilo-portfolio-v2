@@ -1,8 +1,9 @@
 const stackGroups = [
-  { number: "01", title: "Backend & business logic", description: "ASP.NET Core services, public APIs, authentication, permissions, and validation in my IMS and portfolio CMS.", tools: ["C#", "ASP.NET Core", "Entity Framework Core", "REST APIs", "ASP.NET Core Identity"], href: "/projects/portfolio-cms", evidence: "Explore the portfolio CMS" },
-  { number: "02", title: "Data & persistence", description: "Relational data and migrations for business records and content. My IMS uses MySQL; the portfolio CMS uses SQLite.", tools: ["MySQL", "SQL", "SQLite", "EF Core migrations"], href: "/projects/megalight-ims", evidence: "Explore the inventory system" },
-  { number: "03", title: "Web interfaces", description: "React and Vite power this portfolio. My Nexpak Packaging project uses Next.js, TypeScript, and Tailwind CSS.", tools: ["React", "Vite", "Next.js", "TypeScript", "JavaScript", "HTML / CSS", "Tailwind CSS"], href: "/projects/nexpak-packaging", evidence: "Explore Nexpak Packaging" },
-  { number: "04", title: "Testing & delivery", description: "Git-based development, focused automated checks, and deployments to IIS and Vercel. IMS tests cover receipt edit validation and record preservation.", tools: ["Git", "GitHub", "xUnit", "IIS", "Vercel"], href: "/projects/megalight-ims", evidence: "Read the implementation details" },
+  { number: "01", title: "WordPress websites", description: "I build WordPress websites, update existing pages, and fix website issues.", tools: ["WordPress"] },
+  { number: "02", title: "Backend & business logic", description: "ASP.NET Core services, public APIs, authentication, permissions, and validation in my IMS and portfolio CMS.", tools: ["C#", "ASP.NET Core", "Entity Framework Core", "REST APIs", "ASP.NET Core Identity"], href: "/projects/portfolio-cms", evidence: "Explore the portfolio CMS" },
+  { number: "03", title: "Data & persistence", description: "Relational data and migrations for business records and content. My IMS uses MySQL; the portfolio CMS uses SQLite.", tools: ["MySQL", "SQL", "SQLite", "EF Core migrations"], href: "/projects/megalight-ims", evidence: "Explore the inventory system" },
+  { number: "04", title: "Web interfaces", description: "React and Vite power this portfolio. My Nexpak Packaging project uses Next.js, TypeScript, and Tailwind CSS.", tools: ["React", "Vite", "Next.js", "TypeScript", "JavaScript", "HTML / CSS", "Tailwind CSS"], href: "/projects/nexpak-packaging", evidence: "Explore Nexpak Packaging" },
+  { number: "05", title: "Testing & delivery", description: "Git-based development, focused automated checks, and deployments to IIS and Vercel. IMS tests cover receipt edit validation and record preservation.", tools: ["Git", "GitHub", "xUnit", "IIS", "Vercel"], href: "/projects/megalight-ims", evidence: "Read the implementation details" },
 ];
 
 function TechStackPage({ Icon }) {
@@ -27,7 +28,7 @@ function TechStackPage({ Icon }) {
               <span>{group.number}</span>
               <div>
                 <h2>{group.title}</h2>
-                <p>{group.description}</p><a className="stack-evidence-link" href={group.href}>{group.evidence} <Icon name="arrow" size={13} /></a>
+                <p>{group.description}</p>{group.href && <a className="stack-evidence-link" href={group.href}>{group.evidence} <Icon name="arrow" size={13} /></a>}
               </div>
             </div>
             <ul className="stack-chip-list" aria-label={group.title + " technologies"}>
