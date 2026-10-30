@@ -1,0 +1,134 @@
+.section-heading .section-heading-action {
+  flex-shrink: 0;
+  gap: 12px;
+  min-height: 46px;
+  padding: 8px 10px 8px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-radius: 6px;
+  color: var(--text);
+  font: 500 12px var(--mono);
+  text-align: left;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.section-heading-action > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #111;
+  font-size: 17px;
+}
+
+.section-heading .section-heading-action:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  color: var(--text);
+}
+
+.section-explore {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 28px;
+  padding: 26px;
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 10px;
+  background: linear-gradient(115deg, color-mix(in srgb, var(--accent) 7%, var(--surface)), var(--surface));
+  text-decoration: none;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.section-explore-copy strong {
+  display: block;
+  color: var(--text);
+  font: 600 20px/1.4 var(--sans);
+  letter-spacing: -0.03em;
+}
+
+.section-explore-copy p {
+  max-width: 480px;
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font: 400 14px/1.6 var(--sans);
+}
+
+.section-explore-action {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 50px;
+  padding: 13px 20px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #111;
+  font: 600 13px/1.5 var(--sans);
+}
+
+.section-explore-action svg {
+  transition: transform 180ms ease;
+}
+
+.section-explore:hover {
+  border-color: var(--accent);
+}
+
+.section-explore:hover .section-explore-action svg {
+  transform: translateX(3px);
+}
+
+.section-explore:focus-visible,
+.section-heading .section-heading-action:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 5px;
+}
+
+:root[data-theme="light"] .section-explore-action,
+:root[data-theme="light"] .section-heading-action > span {
+  color: #fff;
+}
+
+@media (max-width: 760px) {
+  .section-explore {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+    padding: 22px;
+  }
+
+  .section-explore-action {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-heading > .section-heading-action {
+    display: none;
+  }
+
+  .section-explore {
+    margin-top: 22px;
+    padding: 20px;
+  }
+
+  .section-explore-copy strong {
+    font-size: 19px;
+  }
+
+  .section-explore-copy p {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-explore,
+  .section-explore-action svg,
+  .section-heading .section-heading-action {
+    transition: none;
+  }
+}

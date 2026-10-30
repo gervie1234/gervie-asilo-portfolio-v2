@@ -433,8 +433,20 @@ function SectionHeading({ number, children, action, actionHref = "#contact" }) {
   return (
     <div className="section-heading">
       <p><span>{number}</span> - {children}</p>
-      {action && <a href={actionHref}>{action} <span aria-hidden="true">→</span></a>}
+      {action && <a className="section-heading-action" href={actionHref}>{action} <span aria-hidden="true">→</span></a>}
     </div>
+  );
+}
+
+function SectionExplore({ href, title, description, action }) {
+  return (
+    <a className="section-explore" href={href} aria-label={action}>
+      <div className="section-explore-copy">
+        <strong>{title}</strong>
+        <p>{description}</p>
+      </div>
+      <span className="section-explore-action">{action}<Icon name="arrow" size={20} /></span>
+    </a>
   );
 }
 
@@ -1136,7 +1148,7 @@ useEffect(() => {
           <p className="project-hint">
             {projectsState === "loading" ? "LOADING PUBLISHED PROJECTS" : projectsState === "error" ? "PROJECTS TEMPORARILY UNAVAILABLE" : featuredProjects.length === 0 ? "NO FEATURED PROJECTS" : "SELECT A PROJECT TO EXPLORE THE IMPLEMENTATION"}
           </p>
-          <a className="project-mobile-link" href="/projects"><span>VIEW ALL PROJECTS</span><Icon name="arrow" size={15} /></a>
+          <SectionExplore href="/projects" title="There's more to explore." description="Browse all my websites, business systems, and project case studies." action="View all projects" />
         </section>
 
         <section className="work-history-section content-width section-space" id="experience">
@@ -1189,17 +1201,18 @@ useEffect(() => {
         </section>
 
         <section className="stack-section content-width section-space" id="stack-preview">
-          <SectionHeading number="04" action="view capabilities" actionHref="/stack">core stack</SectionHeading>
+          <SectionHeading number="04" action="full tech stack" actionHref="/stack">core stack</SectionHeading>
           <div className="stack-layout">
             <p>My core tools for building and maintaining applications, from the database and API to the interface and deployment.</p>
             <div className="skill-cloud" role="list" aria-label="Core technologies">
               {coreStack.map((tool) => <span role="listitem" key={tool}>{tool}</span>)}
             </div>
           </div>
+          <SectionExplore href="/stack" title="Explore my full tech stack." description="See the tools I use and how they connect to my projects." action="View full tech stack" />
         </section>
 
         <section className="designs-section content-width section-space" id="designs">
-          <SectionHeading number="05" action="view more" actionHref="/designs">graphic design</SectionHeading>
+          <SectionHeading number="05" action="all design work" actionHref="/designs">graphic design</SectionHeading>
           <p className="designs-lead">A selection of my graphic design work, alongside my software development practice.</p>
           <div className="design-preview-grid">
             {featuredDesignGroups.map((group, index) => {
@@ -1230,7 +1243,7 @@ useEffect(() => {
               );
             })}
           </div>
-          <a className="designs-mobile-link" href="/designs"><span>VIEW MORE DESIGNS</span><Icon name="arrow" size={15} /></a>
+          <SectionExplore href="/designs" title="See more of my design work." description="Explore the full gallery of graphics, campaigns, and design collections." action="View all design work" />
         </section>
 
         <section className="contact-section content-width" id="contact">
