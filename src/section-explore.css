@@ -1,33 +1,3 @@
-.section-heading .section-heading-action {
-  flex-shrink: 0;
-  gap: 12px;
-  min-height: 46px;
-  padding: 8px 10px 8px 16px;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
-  border-radius: 6px;
-  color: var(--text);
-  font: 500 12px var(--mono);
-  text-align: left;
-  transition: border-color 180ms ease, background 180ms ease;
-}
-
-.section-heading-action > span {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background: var(--accent);
-  color: #111;
-  font-size: 17px;
-}
-
-.section-heading .section-heading-action:hover {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-  color: var(--text);
-}
-
 .section-explore {
   display: flex;
   align-items: center;
@@ -82,14 +52,12 @@
   transform: translateX(3px);
 }
 
-.section-explore:focus-visible,
-.section-heading .section-heading-action:focus-visible {
+.section-explore:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 5px;
 }
 
-:root[data-theme="light"] .section-explore-action,
-:root[data-theme="light"] .section-heading-action > span {
+:root[data-theme="light"] .section-explore-action {
   color: #fff;
 }
 
@@ -107,10 +75,6 @@
 }
 
 @media (max-width: 640px) {
-  .section-heading > .section-heading-action {
-    display: none;
-  }
-
   .section-explore {
     margin-top: 22px;
     padding: 20px;
@@ -127,8 +91,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .section-explore,
-  .section-explore-action svg,
-  .section-heading .section-heading-action {
+  .section-explore-action svg {
     transition: none;
   }
 }

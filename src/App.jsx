@@ -429,11 +429,10 @@ function Icon({ name, size = 17 }) {
   return <svg {...common}>{paths[name]}</svg>;
 }
 
-function SectionHeading({ number, children, action, actionHref = "#contact" }) {
+function SectionHeading({ number, children }) {
   return (
     <div className="section-heading">
       <p><span>{number}</span> - {children}</p>
-      {action && <a className="section-heading-action" href={actionHref}>{action} <span aria-hidden="true">→</span></a>}
     </div>
   );
 }
@@ -1129,7 +1128,7 @@ useEffect(() => {
         </section>
 
         <section className="projects-section content-width section-space" id="projects">
-          <SectionHeading number="01" action="view all projects" actionHref="/projects">selected projects</SectionHeading>
+          <SectionHeading number="01">selected projects</SectionHeading>
           <div className="developer-project-grid">
             {featuredProjects.slice(0, 4).map((project) => (
               <a className="developer-project-card" href={project.href} key={project.slug}>
@@ -1201,7 +1200,7 @@ useEffect(() => {
         </section>
 
         <section className="stack-section content-width section-space" id="stack-preview">
-          <SectionHeading number="04" action="full tech stack" actionHref="/stack">core stack</SectionHeading>
+          <SectionHeading number="04">core stack</SectionHeading>
           <div className="stack-layout">
             <p>My core tools for building and maintaining applications, from the database and API to the interface and deployment.</p>
             <div className="skill-cloud" role="list" aria-label="Core technologies">
@@ -1212,7 +1211,7 @@ useEffect(() => {
         </section>
 
         <section className="designs-section content-width section-space" id="designs">
-          <SectionHeading number="05" action="all design work" actionHref="/designs">graphic design</SectionHeading>
+          <SectionHeading number="05">graphic design</SectionHeading>
           <p className="designs-lead">A selection of my graphic design work, alongside my software development practice.</p>
           <div className="design-preview-grid">
             {featuredDesignGroups.map((group, index) => {
